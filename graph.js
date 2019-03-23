@@ -151,9 +151,10 @@ let widthTraversal2 = (node) => {
             // nodes = [parent] stack = [child1, child2, child3]
             // nodes = [parent, child1] stack = [child2, child3, child1-1, child1-2]
             // nodes = [parent, child1, child2] stack = [child3, child1-1, chidl1-2, child2-1]
+            for (let i = 0; i < children.length; i++) {
+                stack.push(children[i])
+            }
         }
     }
+    return nodes;
 }
-
-
-
