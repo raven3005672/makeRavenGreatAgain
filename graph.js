@@ -1,53 +1,53 @@
 // 无向图
 function Graph() {
-    this.vertices = []          // 顶点集合
-    this.edges = new Map()      // 边集合
+    this.vertices = [];          // 顶点集合
+    this.edges = new Map();      // 边集合
 }
 Graph.prototype.addVertex = function(v) {   // 添加顶点方法
-    this.vertices.push(v)
-    this.edges.set(v, [])
+    this.vertices.push(v);
+    this.edges.set(v, []);
 }
 Graph.prototype.addEdge = function(v, w) {  // 添加边方法
-    let vEdge = this.edges.get(v)
-    vEdge.push(w)
-    this.edges.set(v, vEdge)
+    let vEdge = this.edges.get(v);
+    vEdge.push(w);
+    this.edges.set(v, vEdge);
 
-    let wEdge = this.edges.get(w)
-    wEdge.push(v)
-    this.edges.set(w, wEdge)
+    let wEdge = this.edges.get(w);
+    wEdge.push(v);
+    this.edges.set(w, wEdge);
 }
 Graph.prototype.toString = function() {
-    var s = ''
+    var s = '';
     for (var i = 0; i < this.vertices.length; i++) {
-        s += this.vertices[i] + ' -> '
-        var neighors = this.edges.get(this.vertices[i])
+        s += this.vertices[i] + ' -> ';
+        var neighors = this.edges.get(this.vertices[i]);
         for (var j = 0; j < neighors.length; j++) {
-            s += neighors[j] + ' '
+            s += neighors[j] + ' ';
         }
-        s += '\n'
+        s += '\n';
     }
-    return s
+    return s;
 }
 
 Graph.prototype.dfs = function() {
-    var marked = []
+    var marked = [];
 
     for (var i=0; i<this.vertices.length; i++) {
         if (!marked[this.vertices[i]]) {
-            dfsVisit(this.vertices[i], this)
+            dfsVisit(this.vertices[i], this);
             // dfsVisit.apply(this, [this.vertices[i]])
         }
     }
 
     function dfsVisit(u, thisArg) {
-        let edges = thisArg.edges
-        marked[u] = true
-        console.log(u)
-        var neighbors = edges.get(u)
+        let edges = thisArg.edges;
+        marked[u] = true;
+        console.log(u);
+        var neighbors = edges.get(u);
         for (var i=0; i<neighbors.length; i++) {
-            var w = neighbors[i]
+            var w = neighbors[i];
             if (!marked[w]) {
-                dfsVisit(w, thisArg)
+                dfsVisit(w, thisArg);
             }
         }
     }
@@ -55,17 +55,17 @@ Graph.prototype.dfs = function() {
 }
 
 // test
-var graph = new Graph()
-var vertices = [1, 2, 3, 4, 5]
+var graph = new Graph();
+var vertices = [1, 2, 3, 4, 5];
 for (var i=0; i<vertices.length; i++) {
-    graph.addVertex(vertices[i])
+    graph.addVertex(vertices[i]);
 }
 graph.addEdge(1, 4); //增加边
 graph.addEdge(1, 3);
 graph.addEdge(2, 3);
 graph.addEdge(2, 5);
 
-console.log(graph.toString())
+console.log(graph.toString());
 // 1 -> 4 3 
 // 2 -> 3 5 
 // 3 -> 1 2 
@@ -82,7 +82,7 @@ console.log(graph.toString())
 // 依次从v的未被访问的临接点出发，对图进行深度优先遍历，直至图中和v有路径相同的顶点都被访问
 // 若此时图中尚有顶点未被访问，则从一个未被访问的顶点出发，重新进行深度优先遍历，直到所有顶点均被访问过为止
 
-graph.dfs()
+graph.dfs();
 // 1
 // 4
 // 3
@@ -107,7 +107,7 @@ let deepTraversal1 = (node, nodeList = []) => {
 let deepTraversal2 = (node) => {
     let nodes = [];
     if (node !== null) {
-        nodes.push(node)
+        nodes.push(node);
         let children = node.children;
         for (let i = 0; i < children.length; i++) {
             nodes = nodes.concat(deepTraversal2(children[i]));
@@ -131,7 +131,7 @@ let deepTraversal3 = (node) => {
             // node = [parent, child1] stack = [child3, child2, child1-2, child1-1]
             // node = [parent, child1-1] stack = [child3, child2, child1-2]
             for (let i = children.length - 1; i >= 0; i--) {
-                stack.push(children[i])
+                stack.push(children[i]);
             }
         }
     }
@@ -152,7 +152,7 @@ let widthTraversal2 = (node) => {
             // nodes = [parent, child1] stack = [child2, child3, child1-1, child1-2]
             // nodes = [parent, child1, child2] stack = [child3, child1-1, chidl1-2, child2-1]
             for (let i = 0; i < children.length; i++) {
-                stack.push(children[i])
+                stack.push(children[i]);
             }
         }
     }
