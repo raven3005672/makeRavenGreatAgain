@@ -195,6 +195,7 @@ class Example extends React.Component {
 参考npmInstall.js
 
 21.有以下三个判断数组的方法，请分别介绍它们之间的区别和优劣
+参考methodOfcheckIsArray.js
 
 22.介绍下重绘Repaint和回流Reflow，以及如何进行优化
 
