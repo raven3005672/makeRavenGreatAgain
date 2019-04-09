@@ -198,10 +198,13 @@ class Example extends React.Component {
 参考methodOfcheckIsArray.js
 
 22.介绍下重绘Repaint和回流Reflow，以及如何进行优化
+参考repaint&reflow.js
 
 23.介绍下观察者模式和订阅发布模式的区别，各自适用于什么场景
+参考Observer&Publish-Subscribe.js
 
 24.聊聊Redux和Vuex的设计思想
+参考Vuex-Flux-Redux-ReduxSaga-Dva-MobX.js
 
 25.说说浏览器和Node事件循环的区别
 
