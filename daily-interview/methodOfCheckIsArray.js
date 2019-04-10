@@ -15,7 +15,7 @@ Object.prototype.toString.call({name: "An"});   // "[object Object]"
 // Object.prototype.toString.call()常用于判断浏览器内置对象时。
 
 
-instanceof
+// instanceof
 // instanceof的内部机制是通过判断对象的原型链中是不是能找到类型的prototype。
 // 使用instanceof判断一个对象是否为数组，instanceof会判断这个对象的原型链上是否会找到对应的Array的原型，找到返回true，否则返回false。
 [] instancof Array;     // true

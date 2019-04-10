@@ -1,4 +1,4 @@
-// https://zhuanlan.zhihu.com/p/53599723
+// 详细原文见https://zhuanlan.zhihu.com/p/53599723
 
 // 目标 => 管理状态state、共享状态
 // 解决思路 => 把组件之间需要共享的状态抽取出来，遵循特定的约定，统一来管理，让状态的变化可以预测。
@@ -206,9 +206,34 @@ const reducer = function(oldState, action) {
 // 封装少，自由度高，但是代码就会变复杂；封装多，代码变简单了，但是自由度就会变差。
 
 
+Vuex
+// 主要用于Vue，和Flux，Redux的思想很类似
+Store
+// 每一个Vuex里面有一个全局的Store，包含着应用中的状态State，这个State只是需要在组件中共享的数据，不用放所有的State。
+// 和Redux类似，一个应用仅会包含一个Store实例。单一状态树能够直接定位任一特定的状态片段，在调试的过程中也能轻易地取得整个当前应用状态的快照。
+// Vuex通过store选项，把state注入到了整个应用中，这样子组件能够通过this.\$store访问到state
+const app = new Vue({
+  el: '#app',
+  // 把store对象提供给“store”选项，这可以把store的实例注入所有的子组件
+  store,
+  components: {Counter},
+  template: `<div class="app"><counter></counter></div>`
+})
+const Counter = {
+  template: `<div>{{count}}</div>`,
+  computed: {
+    count() {
+      return this.$store.state.count
+    }
+  }
+}
+// State改变，View就会跟着改变，这个改变利用的是Vue的响应式机制
+Mutation
+// 显而易见，State不能直接改，需要通过一个约定的方式，这个方式在Vuex里面叫做mutation，更改Vuex的store中的状态的唯一方法是提交mutation。
+// Vuex中的mutation非常类似于事件：每个mutation都有一个字符串的事件类型（type）和一个回调函数（handler）
 
 
-// todo 
+
 
 
 
