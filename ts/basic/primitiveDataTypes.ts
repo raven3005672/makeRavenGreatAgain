@@ -41,6 +41,23 @@ let sentence: string = `Hello, my name is ${myName}. I'll be ${myAge + 1} years 
 function alertName(): void {
     alert('My name is Tom');
 }
+// 声明一个void类型的变量没有什么用，因为你只能将它赋值为undefined和null
+let unusable: void = undefined;
+
+
+// Null和Undefined
+// 在TypeScript中，可以使用null和undefined来定义这两个原始数据类型：
+let u: undefined = undefined;
+let n: null = null;
+// undefined类型的变量只能被赋值为undefined，null类型的变量只能被赋值为null
+// 与void的区别是，undefined和null是所有类型的子类型。也就是说undefined类型的变量，可以赋值给number类型的变量；
+let num: number = undefined;
+let u: undefined;
+let num: number = u;        // suc
+// 而void类型的变量不能赋值给number类型的变量：
+let u: void;
+let num: number = u;        // error
+
 
 
 
