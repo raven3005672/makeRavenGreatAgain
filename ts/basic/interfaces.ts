@@ -89,7 +89,20 @@ let tom: Person = {
 // 任意属性的值允许时string，但是可选属性age的值是number，number不是string的子属性，所以报错了。
 
 
-
+// 只读属性
+// 我们希望对象中的一些字段只能在创建的时候被赋值，他们可以用readonly定义只读属性：
+interface Person {
+    readonly id: number;
+    name: string;
+    age?: number;
+    [propName: string]: any;
+}
+let tom: Person = {
+    id: 89757,
+    name: 'Tom',
+    gender: 'male'
+}
+tom.id = 9527;      // error
 
 
 
