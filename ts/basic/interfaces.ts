@@ -103,6 +103,18 @@ let tom: Person = {
     gender: 'male'
 }
 tom.id = 9527;      // error
+// 只读的约束存在于第一次给对象赋值的时候，而不是第一次给只读属性赋值的时候
+interface Person {
+    readonly id: number;
+    name: string;
+    age?: number;
+    [propName: string]: any;
+}
+let tom: Person = {     // error id is missing
+    name: 'Tom',
+    gender: 'male'
+};
+tom.id = 89757;         // error
 
 
 

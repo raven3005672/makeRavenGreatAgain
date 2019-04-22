@@ -70,3 +70,21 @@ function bfs(tree) {
     return result;
 }
 console.log(bfs(ast.ast))
+
+var code = "function foo() {\n\
+    function x() {}\n\
+    function y() {}\n\
+}\n\
+function bar() {}";
+var toplevel = UglifyJS.parse(code);
+var walker = new UglifyJS.TreeWalker(function(node) {
+    if (node instanceof UglifyJS.AST_Defun) {
+        console.log(UglifyJS.string_template("Found funciont {name} at {line}, {col}", {
+            name: node.name.name,
+            line: node.start.line,
+            col: node.start.col
+        }));
+        return true;
+    }
+})
+toplevel.walk(walker)
