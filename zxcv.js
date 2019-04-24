@@ -15,17 +15,19 @@ function a (token, tokenTime = Date.now()) {
     var thisArg = tokenTime.toString().slice(-2) % 40;
     var fibN = parseInt(tokenTime.toString().slice(-1)) + 85;
     var plusFib = fib(fibN, 1, 1).toString();
-    var dict = ''.padStart(16, plusFib.slice(thisArg) + plusFib.split('').reverse().join('')).split('').map(Number);
-    
+    // var dict = ''.padStart(16, plusFib.slice(thisArg) + plusFib.split('').reverse().join('')).split('').map(Number);
+    var dict = (plusFib.slice(thisArg) + plusFib.split('').reverse().join('')).slice(0, 16).split('').map(Number);
+
     var i = 0;
     while (i < tokenArr.length) {
         let tmp16 = parseInt(tokenArr[i], 16);
-        tokenArr[i] = tmp16 > -1 ? (tmp16 + dict[i % 16] + 30 + "").padStart(2, '0') : '60';
+        tokenArr[i] = tmp16 > -1 ? (tmp16 + dict[i % 16] + 40 + "") : '70';
         tokenArr[i] = String.fromCharCode(tokenArr[i]);
         i++;
     }
     tokenArr = tokenArr.join('');
     
+    console.log(tokenArr)
     return {
         tokenArr,
         tokenTime
@@ -38,12 +40,13 @@ const {tokenArr, tokenTime} = a(input);
 // output function a的输入
 
 function b (tokenArr, tokenTime) {
-    var tokenArr = tokenArr.split('').map(a => a.charCodeAt() - 30);
+    var tokenArr = tokenArr.split('').map(a => a.charCodeAt() - 40);
     var thisArg = tokenTime.toString().slice(-2) % 40;
     var fibN = parseInt(tokenTime.toString().slice(-1)) + 85;
     var plusFib = fib(fibN, 1, 1).toString();
-    var dict = ''.padStart(16, plusFib.slice(thisArg) + plusFib.split('').reverse().join('')).split('').map(Number);
-    
+    // var dict = ''.padStart(16, plusFib.slice(thisArg) + plusFib.split('').reverse().join('')).split('').map(Number);
+    var dict = (plusFib.slice(thisArg) + plusFib.split('').reverse().join('')).slice(0, 16).split('').map(Number);
+
     var i = 0;
     while (i < tokenArr.length) {
         tokenArr[i] = tokenArr[i] != 30 ? (tokenArr[i] - dict[i % 16]).toString(16) : '-';
