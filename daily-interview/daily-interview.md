@@ -209,14 +209,28 @@ class Example extends React.Component {
 参考Vuex-Flux-Redux-ReduxSaga-Dva-MobX.js
 
 25.说说浏览器和Node事件循环的区别
+参考eventLoop.js
 
 26.介绍模块化发展历程
+IIFE——立即执行函数表达式
+AMD——requireJS【define】
+CMD——seaJS支持动态引入依赖【define。require】
+CommonJS——node【require】
+UMD——兼容AMD+CommonJS
+webpack(require.ensure)
+ES Module——import
+参考front-modules.js
 
 27.全局作用域中，从const和let声明的变量不在window上，那到底在哪里？如何去获取
+在块级作用域Script中。
 
 28.cookie和token都存放在header中，为什么不会劫持token
+浏览器会自动带上cookie，而浏览器不会自动带上token
+相关安全问题：XSS、CSRF
 
 29.Vue的双向数据绑定，Model如何改变View，View如何改变Model
+M->V的映射Data Binding
+V->M的事件监听DOM Listeners
 
 30.把两个数组合并为一个数组
 
