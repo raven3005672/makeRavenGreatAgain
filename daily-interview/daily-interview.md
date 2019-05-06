@@ -233,26 +233,177 @@ M->V的映射Data Binding
 V->M的事件监听DOM Listeners
 
 30.把两个数组合并为一个数组
+请把两个数组 ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2'] 和 ['A', 'B', 'C', 'D']，合并为 ['A1', 'A2', 'A', 'B1', 'B2', 'B', 'C1', 'C2', 'C', 'D1', 'D2', 'D']。
+```
+let a1 =  ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'D1', 'D2']
+let a2 = ['A', 'B', 'C', 'D'].map((item) => {
+  return item + 3
+})
+let a3 = [...a1, ...a2].sort().map((item) => {
+  if(item.includes('3')){
+    return item.split('')[0]
+  }
+  return item
+})
+```
 
 31.改造下面的代码，使之输出0-9，尽量多的解法
+```
 for (var i = 0; i< 10; i++) {
 	setTimeout(() => {
 		console.log(i);
     }, 1000)
 }
+```
+参考31.js
 
 32.Virtual DOM真的比操作原生DOM块么？
+参考VirtualDOM-NativeDOM.js
 
 33.写出下面代码的输出结果
+```
 var b = 10;
 (function b(){
     b = 20;
     console.log(b); 
 })();
+```
+打印function b...
+如果var b = 20或者function名字非b; 则输出20
 
 34.简单改造下面的代码，使之分别打印10和20
+```
 var b = 10;
 (function b(){
     b = 20;
     console.log(b); 
 })();
+```
+参考34.js
+
+35.浏览器缓存读取规则
+
+36.使用迭代的方式实现flatten函数
+
+37.为什么Vuex的mutation和Redux的reducer中不能做异步操作？
+
+38.下面代码中a在什么情况下会打印1？
+```
+var a = ?;
+if(a == 1 && a == 2 && a == 3){
+ 	console.log(1);
+}
+```
+
+39.介绍下BFC及其应用
+
+40.在Vue中，子组件为何不可以修改父组件传递的Prop
+
+41.下面代码输出什么？
+```
+var a = 10;
+(function () {
+    console.log(a)
+    a = 5
+    console.log(window.a)
+    var a = 20;
+    console.log(a)
+})()
+```
+
+42.实现一个sleep函数
+比如 sleep(1000) 意味着等待1000毫秒，可从 Promise、Generator、Async/Await 等角度实现
+
+43.使用sort()对数组[3,15,8,29,102,22]进行排序，输出结果
+
+44.接受HTTPS握手过程
+
+45.HTTPS握手过程中，客户端如何验证证书的合法性
+
+46.输出以下代码执行的结果并解释为什么
+```
+var obj = {
+    '2': 3,
+    '3': 4,
+    'length': 2,
+    'splice': Array.prototype.splice,
+    'push': Array.prototype.push
+}
+obj.push(1)
+obj.push(2)
+console.log(obj)
+```
+
+47.双向绑定和vuex是否冲突
+
+48.call和apply的区别是什么，哪个性能好一些
+
+49.为什么通常在发送数据埋点请求的时候使用的是1x1像素的透明gif图片
+
+50.实现(5).add(3).minus(3)功能
+
+51.Vue的响应式原理中Object.defineProperty有什么缺陷？
+为什么Vue3.0采用了Proxy，抛弃了Object.defineProperty
+
+52.怎么让一个div水平垂直居中
+
+53.输出以下代码的执行结果并解释为什么
+```
+var a = {n: 1};
+var b = a;
+a.x = a = {n: 2};
+console.log(a.x) 	
+console.log(b.x)
+```
+
+54.冒泡还需如何实现，时间复杂度是多少，还可以如何改进
+
+55.某公司1到12月份的销量额存在一个对象里面
+如下：{1:222, 2:123, 5:888}，请把数据处理为如下结构：[222, 123, null, null, 888, null, null, null, null, null, null, null]。
+
+56.要求设计LazyMan类，实现以下功能
+```
+LazyMan('Tony');
+// Hi I am Tony
+
+LazyMan('Tony').sleep(10).eat('lunch');
+// Hi I am Tony
+// 等待了10秒...
+// I am eating lunch
+
+LazyMan('Tony').eat('lunch').sleep(10).eat('dinner');
+// Hi I am Tony
+// I am eating lunch
+// 等待了10秒...
+// I am eating diner
+
+LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk food');
+// Hi I am Tony
+// 等待了5秒...
+// I am eating lunch
+// I am eating dinner
+// 等待了10秒...
+// I am eating junk food
+```
+
+57.分析比较opacity: 0、visibility: hidden、display: none优劣和使用场景。
+
+58.箭头函数和普通函数的区别是什么？构造函数可以使用new生成实例，name箭头函数可以么？为什么？
+
+59.给定两个数组，写一个方法来计算它们的交集。
+给定 nums1 = [1, 2, 2, 1]，nums2 = [2, 2]，返回 [2, 2]。
+
+60.已知如下代码，如何修改才能让图片宽度为300px？注意下面代码不可修改
+```
+<img src="1.jpg" style="width:480px!important;”>
+```
+
+61.介绍下如何实现token加密
+
+62.redux为什么要把reducer设计成纯函数
+
+63.如何设计实现无缝轮播
+
+64.模拟实现一个Promise.finally
+
+65.a.b.c.d和a['b']['c']['d']那个性能更好？
