@@ -282,6 +282,8 @@ var b = 10;
 参考34.js
 
 35.浏览器缓存读取规则
+可以分成 Service Worker、Memory Cache、Disk Cache 和 Push Cache，那请求的时候 from memory cache 和 from disk cache 的依据是什么，哪些数据什么时候存放在 Memory Cache 和 Disk Cache中？
+参考cache.js
 
 36.使用迭代的方式实现flatten函数
 
@@ -407,3 +409,4 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 64.模拟实现一个Promise.finally
 
 65.a.b.c.d和a['b']['c']['d']那个性能更好？
+
