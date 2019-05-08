@@ -49,9 +49,18 @@
 
 
 // 强缓存
-强缓存：不会想服务器发送请求，直接从缓存中读取资源，在chrome控制台的network选线中可以看到该请求返回200的状态码，并且size显示from disk cache或from memory cache。
-强缓存可以通过设置两种HTTP Header实现，Expires和Cache-Control。
-Expires:缓存过期时间，用来指定资源到期的时间，是服务器端的具体的时间点。
+// 强缓存：不会想服务器发送请求，直接从缓存中读取资源，在chrome控制台的network选线中可以看到该请求返回200的状态码，并且size显示from disk cache或from memory cache。
+// 强缓存可以通过设置两种HTTP Header实现，Expires和Cache-Control。
+// Expires:缓存过期时间，用来指定资源到期的时间，是服务器端的具体的时间点。修改本地时间可能会造成缓存失效。
+// Cache-Control:表示在请求正确返回时间的一段时间内再次加载资源，就会命中强缓存。
+// public、private、no-cache、no-store、max-age、s-maxage、max-stale、min-fresh
+// 两者同时存在的话，Cache-Control优先级高于Expires
+强缓存判断是否缓存的依据来自于是否超出某个时间或者某个时间段，而不关心服务器端文件是否已经更新，这可能会导致加载文件不是服务器端最新的内容。
+
+
+// 协商缓存
+
+
 
 
 
