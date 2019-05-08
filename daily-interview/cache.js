@@ -59,8 +59,27 @@
 
 
 // 协商缓存
+协商缓存就是强制缓存失效后，浏览器携带缓存标识向服务器发起请求，有服务器根据缓存标识决定是否使用缓存的过程。
+// 通过设置两种HTTP Header实现：Last-Modified和ETag。
+// 1.Last-Modified和If-Modified-Since
+// 2.ETag和If-None-Match
+// 精确度上Etag要优于Last-Modified，性能上Etag要逊于Last-Modified，优先级上服务器校验优先考虑Etag。
 
 
+// 缓存机制
+// 强制缓存优先于协商缓存进行，若强制缓存(Expires和Cache-Control)生效则直接使用缓存，
+// 若不生效则进行协商缓存(Last-Modified / If-Modified-Since和Etag / If-None-Match)，协商缓存由服务器决定是否使用缓存，
+// 若协商缓存失效，那么代表该请求的缓存失效，返回200，重新返回资源和缓存标识，再存入浏览器缓存中；生效则返回304，继续使用缓存。
 
 
+// 实际场景应用缓存策略
+// 1.频繁变动的资源
+Cache-Control: no-cache
+// 2.不常变化的资源
+Cache-Control: max-age=31536000
 
+
+// 用户行为对浏览器缓存的影响
+打开网页，地址栏输入地址：查找disk cache中是否有匹配。有则使用，没有则发送网络请求。
+普通刷新F5：因为TAB并没有关闭，因此memory cache是可用的，会被优先使用，其次才是disk cache。
+强制刷新Ctrl+F5：浏览器不使用缓存，因此发送的请求头部均带有Cache-control: no-cache，服务器直接返回200和最新内容。
