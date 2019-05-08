@@ -286,6 +286,7 @@ var b = 10;
 参考cache.js
 
 36.使用迭代的方式实现flatten函数
+参考flatten.js
 
 37.为什么Vuex的mutation和Redux的reducer中不能做异步操作？
 
