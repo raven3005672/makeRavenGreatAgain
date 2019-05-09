@@ -276,7 +276,7 @@ var b = 10;
 var b = 10;
 (function b(){
     b = 20;
-    console.log(b); 
+    console.log(b);
 })();
 ```
 参考34.js
@@ -289,6 +289,7 @@ var b = 10;
 参考flatten.js
 
 37.为什么Vuex的mutation和Redux的reducer中不能做异步操作？
+参考37.js
 
 38.下面代码中a在什么情况下会打印1？
 ```
@@ -297,10 +298,17 @@ if(a == 1 && a == 2 && a == 3){
  	console.log(1);
 }
 ```
+参考38.js
 
 39.介绍下BFC及其应用
+块级格式上下文，相当于一个独立的容器，里面的元素和外部的元素互相不影响。
+创建BFC的方式：html根元素、float浮动、绝对定位、overflow不为visiable、display为表格布局或者弹性布局
+BFC的主要作用：清除浮动、防止同一BFC容器中的相邻元素间的外边距重叠问题
 
 40.在Vue中，子组件为何不可以修改父组件传递的Prop
+如果修改了，Vue 是如何监控到属性的修改并给出警告的。
+简要：单向数据流，易于检测数据的流动，出现了错误可以更加迅速的定位到错误发生的位置。
+如果修改了会基于当前环境触发warning提示
 
 41.下面代码输出什么？
 ```
@@ -313,15 +321,21 @@ var a = 10;
     console.log(a)
 })()
 ```
+undefined/10/20
+简单解析，IIFE内部变量声明提升，var a = undefined, 输出undefined，内部a=20，window.a外部作用域为10，内部a=20
 
 42.实现一个sleep函数
 比如 sleep(1000) 意味着等待1000毫秒，可从 Promise、Generator、Async/Await 等角度实现
+参考sleep.js
 
 43.使用sort()对数组[3,15,8,29,102,22]进行排序，输出结果
+[3,15,8,29,102,22].sort((a,b) => a - b);
 
-44.接受HTTPS握手过程
+44.介绍HTTPS握手过程
+参考https.js
 
 45.HTTPS握手过程中，客户端如何验证证书的合法性
+参考https.js
 
 46.输出以下代码执行的结果并解释为什么
 ```
@@ -336,19 +350,43 @@ obj.push(1)
 obj.push(2)
 console.log(obj)
 ```
+obj [empty x 2, 1, 2, splice: f, push: f, length: 4]
+伪数组，类型仍是obj
+push方法是根据数组的length为参数，给数组创建一个下标为length的属性。
+因为存在splice方法和length属性，将其作为数组进行打印。
 
 47.双向绑定和vuex是否冲突
+略，参考https://vuex.vuejs.org/zh/guide/forms.html
 
 48.call和apply的区别是什么，哪个性能好一些
+参考call-apply.js
 
 49.为什么通常在发送数据埋点请求的时候使用的是1x1像素的透明gif图片
+能够完成整个http请求+响应
+触发get请求之后不需要获取和处理数据、服务器也不要求发送数据
+跨域友好
+执行过程无阻塞
+相比XMLHttpRequest对象发送GET请求，性能上更好
+gif最低合法体积最小
 
 50.实现(5).add(3).minus(3)功能
+```
+Number.prototype.add = function(n) {
+    return this.valueOf() + n;
+}
+Number.prototype.minus = function(n) {
+    return this.valueOf() - n;
+}
+```
 
 51.Vue的响应式原理中Object.defineProperty有什么缺陷？
 为什么Vue3.0采用了Proxy，抛弃了Object.defineProperty
+Object.defineProperty无法监控到数组下标的变化，导致通过数组下标添加元素，不能实时响应；
+Object.defineProperty只能劫持对象的属性，从而需要对每个对象，每个属性进行遍历，如果，属性值是对象，还需要深度遍历。Proxy可以劫持整个对象，并返回一个新的对象。
+Proxy不仅可以代理对象，还可以代理数组，还可以代理动态增加的属性。
 
 52.怎么让一个div水平垂直居中
+参考div-center.js
 
 53.输出以下代码的执行结果并解释为什么
 ```
@@ -358,6 +396,7 @@ a.x = a = {n: 2};
 console.log(a.x) 	
 console.log(b.x)
 ```
+
 
 54.冒泡还需如何实现，时间复杂度是多少，还可以如何改进
 

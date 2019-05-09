@@ -1,3 +1,4 @@
+// 测试
 const sleep = (time) => {
     return new Promise(resolve => setTimeout(() => resolve(100), time))
 }
@@ -8,90 +9,46 @@ async function sleepAsync() {
 }
 
 sleepAsync();
-
 console.log('noraml')
 
-sleep(2000).then((test) => {
-    console.log(test)
+
+// 四种方式
+// Promise
+const sleep = time => {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+sleep(1000).then(() => {
+    console.log(1)
+});
+
+// Generator
+function* sleepGenerator(time) {
+    yield new Promise(function(resolve, reject) {
+        setTimeout(resolve, time);
+    })
+}
+sleepGenerator(1000).next().value.then(() => {
+    console.log(1)
 })
 
-// "use strict";
+// async
+function sleep(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+async function output() {
+    let out = await sleep(1000);
+    console.log(1);
+    return out;
+}
+output();
 
-// function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-//     try {
-//         var info = gen[key](arg);
-//         var value = info.value;
-//     } catch (error) {
-//         reject(error);
-//         return;
-//     }
-//     if (info.done) {
-//         resolve(value);
-//     } else {
-//         Promise.resolve(value).then(_next, _throw);
-//     }
-// }
-
-// function _asyncToGenerator(fn) {
-//     return function () {
-//         var self = this,
-//             args = arguments;
-//         return new Promise(function (resolve, reject) {
-//             var gen = fn.apply(self, args);
-
-//             function _next(value) {
-//                 asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-//             }
-
-//             function _throw(err) {
-//                 asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-//             }
-//             _next(undefined);
-//         });
-//     };
-// }
-
-// var sleep = function sleep(time) {
-//     return new Promise(function (resolve) {
-//         return setTimeout(function () {
-//             return resolve(100);
-//         }, time);
-//     });
-// };
-
-// function sleepAsync() {
-//     return _sleepAsync.apply(this, arguments);
-// }
-
-// function _sleepAsync() {
-//     _sleepAsync = _asyncToGenerator(
-//         /*#__PURE__*/
-//         regeneratorRuntime.mark(function _callee() {
-//             var a;
-//             return regeneratorRuntime.wrap(function _callee$(_context) {
-//                 while (1) {
-//                     switch (_context.prev = _context.next) {
-//                         case 0:
-//                             console.log('fuck the code');
-//                             _context.next = 3;
-//                             return sleep(5000);
-
-//                         case 3:
-//                             a = _context.sent;
-//                             console.log('fuck the code again', a);
-
-//                         case 5:
-//                         case "end":
-//                             return _context.stop();
-//                     }
-//                 }
-//             }, _callee);
-//         }));
-//     return _sleepAsync.apply(this, arguments);
-// }
-
-// sleepAsync();
-// console.log('noraml');
-// sleep(2000).then(function (test) {
-//     console.log(test);
-// });
+// ES5
+function sleep(callback, time) {
+    if (typeof callback === 'function') {
+        setTimeout(callback, time);
+    }
+}
+function output() {
+    console.log(1);
+}
+sleep(output, 1000);
