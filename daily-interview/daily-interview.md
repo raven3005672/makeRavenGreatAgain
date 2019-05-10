@@ -393,15 +393,24 @@ Proxy不仅可以代理对象，还可以代理数组，还可以代理动态增
 var a = {n: 1};
 var b = a;
 a.x = a = {n: 2};
-console.log(a.x) 	
+console.log(a.x)
 console.log(b.x)
 ```
-
+参考53.js
 
 54.冒泡还需如何实现，时间复杂度是多少，还可以如何改进
+参考54.js
 
 55.某公司1到12月份的销量额存在一个对象里面
 如下：{1:222, 2:123, 5:888}，请把数据处理为如下结构：[222, 123, null, null, 888, null, null, null, null, null, null, null]。
+```
+let obj = {1:222, 2:123, 5:888};
+let result = Array.from({length: 12}, () => null);
+for (key in obj) {
+    result[key - 1] = obj[key]
+}
+console.log(result)
+```
 
 56.要求设计LazyMan类，实现以下功能
 ```
@@ -427,6 +436,7 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 // 等待了10秒...
 // I am eating junk food
 ```
+参考56.js
 
 57.分析比较opacity: 0、visibility: hidden、display: none优劣和使用场景。
 
