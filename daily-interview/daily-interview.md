@@ -439,6 +439,7 @@ LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk foo
 参考56.js
 
 57.分析比较opacity: 0、visibility: hidden、display: none优劣和使用场景。
+参考57.js
 
 58.箭头函数和普通函数的区别是什么？构造函数可以使用new生成实例，name箭头函数可以么？为什么？
 
