@@ -474,6 +474,26 @@ jwt距离：
 然后在滑动最后一张实现最后一张和克隆第一张的无缝转换,当到克隆的第一张的时候停下的时候,,让其切入真的第一张,则实现无线滑动,向前滑动同理
 
 64.模拟实现一个Promise.finally
+Promise.prototype.finally = function (callback) {
+    let P = this.constructor;
+    return this.then(
+        value => P.resolve(callback()).then(() => value),
+        reason => P.resolve(callback()).then(() => {throw reason})
+    )
+}
 
 65.a.b.c.d和a['b']['c']['d']那个性能更好？
+dot更快，AST树解析dot结构更简单
 
+66.ES6代码转成ES5代码的实现思路是什么
+
+67.数组编程
+随机生成一个长度为 10 的整数类型的数组，例如 [2, 10, 3, 4, 5, 11, 10, 11, 20]，将其排列成一个新数组，要求新数组形式如下，例如 [[2, 3, 4, 5], [10, 11], [20]]。
+
+68.如何解决移动端Retina屏1px像素问题
+
+69.如何把一个字符串的大小写取反，AbC => aBc
+
+70.介绍下webpack热更新原理，是如何做到在不刷新浏览器的前提下更新页面的
+
+71.实现一个字符串匹配算法，长度为n的字符串S中，查找是否存在字符串T，T的长度是m，若存在返回所在位置
