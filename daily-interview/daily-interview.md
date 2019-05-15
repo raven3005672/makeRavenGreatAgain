@@ -486,14 +486,57 @@ Promise.prototype.finally = function (callback) {
 dot更快，AST树解析dot结构更简单
 
 66.ES6代码转成ES5代码的实现思路是什么
+ES6 =》 AST语法树 =》转换 =》 生成ES5
+babel/parse的parser方法，babel/core的transformFromAstSync方法，babel/traverse获取依赖
 
 67.数组编程
 随机生成一个长度为 10 的整数类型的数组，例如 [2, 10, 3, 4, 5, 11, 10, 11, 20]，将其排列成一个新数组，要求新数组形式如下，例如 [[2, 3, 4, 5], [10, 11], [20]]。
+参考67.js
 
 68.如何解决移动端Retina屏1px像素问题
+viewport + rem: 根元素html设置font-size，将元素转换成rem，通过window.devicePixelRatio拿到dpr再写meta设置viewport的scale：1/dpr
 
 69.如何把一个字符串的大小写取反，AbC => aBc
+```
+function processString(s) {
+    var arr = s.split('');
+    var new_arr = arr.map((item) => {
+        return item === item.toUppderCase() ? item.toLowerCase() : item.toUpperCase();
+    });
+    return new_arr.join('');
+}
+```
 
 70.介绍下webpack热更新原理，是如何做到在不刷新浏览器的前提下更新页面的
+参考webpackHMR.js
 
 71.实现一个字符串匹配算法，长度为n的字符串S中，查找是否存在字符串T，T的长度是m，若存在返回所在位置
+```
+const find = (s, t) => {
+    if (s.length < t.length) {
+        return -1;
+    }
+    for (let i = 0; i < s.length - t.length; i++) {
+        if (s.slice(i, i + t.length) === t) {
+            return i;
+        }
+    }
+    return -1;
+}
+```
+实际考查KMP算法
+
+72.为什么普通for循环的性能远远高于forEach的性能，请解释其中的原因
+for循环没有额外的函数调用栈和上下文
+forEach函数实际上是array.forEach(function(currentValue, index, arr), thisValue);
+
+73.介绍下BFC、IFC、GFC和FFC
+BFC块级格式化上下文
+IFC内联格式化上下文
+GFC网格格式化上下文
+FFC弹性格式化上下文
+
+74.使用javaScript Proxy实现简单的数据绑定
+
+
+75.数组里面有10万个数据，区第一个元素的
