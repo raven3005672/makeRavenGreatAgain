@@ -587,3 +587,22 @@ console.log(a[b]);
 参考77.js
 
 78.Vue的父组件和子组件声明后期钩子执行顺序是什么？
+加载渲染过程：
+父beforeCreate->父created->父beforeMount->子beforeCreate->子created->子beforeMount->子mounted->父mounted
+子组件更新过程
+父beforeUpdate->子beforeUpdate->子updated->父updated
+父组件更新过程
+父beforeUpdate->父updated
+销毁过程
+父beforeDestroy->子beforeDestroy->子destroyed->父destroyed
+
+79.input搜索如何防抖，如何处理中文输入？
+compositionstart触发于一段文字的输入之前（类似于keydown事件，但是该事件仅在若干可见字符的输入之前，而这些可见字符的输入可能需要一连串的键盘操作、语音识别或者点击输入法的备选词）
+简单来说就是切换中文输入法时在打拼音时（此时input还没有填入真正的内容），会首先触发compositionstart，然后每打一个拼音字母，触发compositionupdate，最后将输入好的中文填入input时触发compositionend。触发compositionstart时，文本框会填入 “虚拟文本”（待确认文本），同时触发input事件；在触发compositionend时，就是填入实际内容后（已确认文本）,所以这里如果不想触发input事件的话就得设置一个bool变量来控制。
+compositionstart => compositionupdate => compositionend
+
+80.介绍下Promise.all使用、原理实现及错误处理
+
+
+81.打出1-10000之间的所有对称数，如121，1331等
+参考81.js

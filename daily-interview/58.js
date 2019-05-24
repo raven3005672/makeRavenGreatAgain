@@ -5,7 +5,7 @@
 // 不可以使用new命令，没有自己的this，无法调用call，apply；没有prototype属性；
 // new命令在执行时需要将构造函数的prototype赋值给新的对象的__proto__。
 
-new过程大致如下
+// new过程大致如下
 function newFunc(father, ...rest) {
     var result = {};
     result.__proto__ = father.prototype;
