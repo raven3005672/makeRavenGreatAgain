@@ -602,7 +602,13 @@ compositionstart触发于一段文字的输入之前（类似于keydown事件，
 compositionstart => compositionupdate => compositionend
 
 80.介绍下Promise.all使用、原理实现及错误处理
-
+Promise.all方法接受一个数组作为参数，p1、p2、p3都是 Promise 实例，如果不是，就会先调用下面讲到的Promise.resolve方法，将参数转为 Promise 实例，再进一步处理。（Promise.all方法的参数可以不是数组，但必须具有 Iterator 接口，且返回的每个成员都是 Promise 实例。）
 
 81.打出1-10000之间的所有对称数，如121，1331等
 参考81.js
+
+82.给定一个数组nums，编写一个函数将所有0移动到数组的末尾，同事保持非零元素的相对顺序。
+参考82.js
+
+83.var/let/const区别的实现原理是什么？
+
