@@ -66,9 +66,57 @@ cycle();
 
 // 标记清除（常用）
 // 标记清除算法将“不再使用的对象”定义为“无法到达的对象”。即从根部（在JS中间就是全局对象）出发定时扫描内存中的对象，凡是能从根部到达的对象，保留。那些从根部触发无法触及到的对象被标记为不再使用，稍后进行回收。
+// 无法触及的对象包含了没有引用的对象这个概念，但反之未必成立。
+
+// 现在对于主流浏览器来说，只需要切断需要回收的对象与根部的联系。最常见的内存泄漏一般都与DOM元素绑定有关：
+email.message = document.createElement('div');
+displayList.appendChild(email.message);
+// 稍后从displayList中清除DOM元素
+displayList.removeAllChildren();
+// 上面代码中，div元素已经从DOM树中清除，但是该div元素还绑定在email对象中，所以如果email对象存在，那么该div元素就会一直保存在内存中。
 
 
+// 内存泄漏
+// 对于持续运行的服务进程（daemon），必须及时释放不再用到的内存。否则，内存占用越来越高，轻则影响系统性能，重则导致进程崩溃。对于不再用到的内存，没有及时释放，就叫做内存泄漏（memory leak）
+
+// 内存泄漏识别方法
+// 1.浏览器方法
+// 打开开发者工具，选择Memory。
+// 在右侧的Select profiling type字段里面勾选timeline。
+// 点击左上角的录制按钮。
+// 在页面上进行各种操作，模拟用户的使用情况。
+// 一段时间后，点击左上角的stop按钮，面板上就会显示这段时间的内存占用情况。
+
+// 2.命令行方法
+// 使用Node提供的process.memoryUsage方法。
+console.log(process.memoryUsage());
+// // 输出
+// {
+//     rss: 27709440,          // resident set size，所有内存占用，包括指令区和堆栈
+//     heapTotal: 5685248,     // "堆"占用的内存，包括用到的和没用到的
+//     heapUsed: 3449392,      // 用到的堆的部分
+//     external: 8772          // V8引擎内部的C++对象占用的内存
+// }
+// 判断内存泄漏，以heapUsed字段为准
 
 
+WeakMap
+// ES6新出的两种数据结构：WeakSet和WeakMap，表示这是弱引用，它们对于值的引用都是不计入垃圾回收机制的。
+const wm = new WeakMap();
+const element = document.getElementById('example');
+wm.set(element, 'some information');
+wm.get(element);        // some information
+// 先新建一个WeakMap实例，然后将一个DOM节点作为键名存入该实例，并将一些附加信息作为键值，一起存放在WeakMap里面。这时，WeakMap里面对element的引用就是弱引用。
 
+
+// 从内存来看null和undefined本质的区别是什么？
+// 给一个全局变量赋值为null，相当于将这个变量的指针对象以及值清空，如果是给对象的属性赋值null，或者局部变量赋值为null，相当于给这个属性分配了一块空的内存，然后值为null，JS会回收全局变量为null的对象。
+// 给一个全局变量赋值为undefined，相当于将这个对象的值清空，但是这个对象依旧存在，如果给对象的属性赋值为undefined，说明这个值为空值。
+
+// ES6语法中的const声明一个只读的常量，那为什么下面可以修改const的值？
+const foo = {};
+foo = {};       // err
+foo.prop = 123;
+// const实际上保证的，并不是变量的值不得改动，而是变量指向的那个内存地址所保存的数据不得改动。对于简单类型的数据（数值、字符串、布尔值），值就保存在变量指向的那个内存地址，因此等同于常量。
+// 但对于符合类型的数据（主要是对象和数组），变量指向的内存地址，保存的只是一个指向实际数据的指针，const只能保证这个指针是固定的（即总是指向另一个固定的地址），至于它指向的数据结构是不是可变的，就完全不能控制了。
 

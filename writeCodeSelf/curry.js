@@ -127,8 +127,8 @@ const toStr = Function.prototype.call.bind(Object.prototype.toString);
 // 上面例子首先使用Function.prototype.call函数指定一个this值，然后.bind返回一个新的函数，始终将Object.prototype.toString设置为传入参数，其实等价于Object.prototype.toString.call()。
 
 
-
-// 实现currying函数【*****IMPORTANT*****】
+// 【*****IMPORTANT*****】
+// 实现currying函数
 // 我们可以理解所谓的柯里化函数，就是封装一系列的处理步骤，通过闭包将参数集中起来计算，最后再把需要处理的参数传进去。
 // 实现原理就是：用闭包把传入参数保存起来，当传入参数的数量足够执行函数时，就开始执行函数。
 
