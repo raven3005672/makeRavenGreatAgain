@@ -287,9 +287,119 @@ var bar = foo.bind(ø, 2);
 bar(3);                         // a: 2, b: 3
 
 // 4.2间接引用
+// 间接引用下，调用这个函数会应用默认绑定规则。间接引用最容易在赋值时发生。
+// p.foo = o.foo的返回值是目标函数的引用，所以调用位置是foo()而不是p.foo()或者o.foo()
+function foo() {
+    console.log(this.a);
+}
+var a = 2;
+var o = {a: 3, foo: foo};
+var p = {a: 4};
+o.foo();        // 3
+(p.foo = o.foo)();      // 2
+
+// 4.3软绑定
+// 硬绑定可以把this强制绑定到指定的对象（new除外），防止函数调用应用默认绑定规则。但是会降低函数的灵活性，使用硬绑定之后就无法使用隐式绑定或者显式绑定来修改this。
+// 如果给默认绑定指定一个全局对象和undefined以外的值，那就可以实现和硬绑定相同的效果，同时保留隐式绑定或者显式绑定修改this的能力。
+// 默认绑定规则，优先级排最后
+// 如果this绑定到全局对象或者undefined，那就把指定的默认对象obj绑定到this，否则不会修改this
+if (!Function.prototype.softBind) {
+    Function.prototype.softBind = function(obj) {
+        var fn = this;
+        // 捕获所有curried参数
+        var curried = [].slice.call(arguments, 1);
+        var bound = function() {
+            return fn.apply(
+                (!this || this === (window || global)) ?
+                    obj : this,
+                curried.concat.apply(curried, arguments)
+            );
+        };
+        bound.prototype = Object.create(fn.prototype);
+        return bound;
+    };
+}
+// 使用：软绑定版本的foo()可以手动将this绑定到obj2或者obj3上，但如果应用默认绑定，则会将this绑定到obj。
+function foo() {
+    console.log("name: " + this.name);
+}
+var obj = {name: "obj"},
+    obj2 = {name: "obj2"},
+    obj3 = {name: "obj3"};
+// 默认绑定，应用软绑定，软绑定把this绑定到默认对象obj
+var fooOBJ = foo.softBind(obj);
+fooOBJ();       // name: obj
+// 隐式绑定规则
+obj2.foo = foo.softBind(obj);
+obj2.foo();     // name: obj2
+// 显式绑定规则
+fooOBJ.call(obj3);      // name: obj3
+// 绑定丢失，应用软绑定
+setTimeout(obj2.foo, 10);       // name: obj
+
+
+// 5this词法
+// ES6新增一种特殊函数类型：箭头函数，箭头函数无法使用上述四条规则，而是根据外层（函数或者全局）作用域（词法作用域）来决定this。
+// foo()内部创建的箭头函数会捕获调用时foo()的this。由于foo()的this绑定到obj1，bar（引用箭头函数）的this也会绑定到obj1，箭头函数的绑定无法被修改（new也不行）。
+function foo() {
+    // 返回一个箭头函数
+    return (a) => {
+        // this继承自foo()
+        console.log(this.a);
+    };
+}
+var obj1 = {
+    a: 2
+};
+var obj2 = {
+    a: 3
+};
+var bar = foo.call(obj1);
+bar.call(obj2);         // 2
+// ES6之前和箭头函数类似的模式，采用的是词法作用域取代了传统的this机制。
+function foo() {
+    var self = this;        // lexical capture of this
+    setTimeout(function() {
+        console.log(self.a);        // self只是继承了foo()函数的this绑定
+    }, 100);
+}
+var obj = {
+    a: 2
+};
+foo.call(obj);      // 2
+// 代码风格统一问题：如果既有this风格的代码，还会使用self = this或者箭头函数来否定this机制。
+// 只使用词法作用域并完全抛弃错误this风格的代码。
+// 完全采用this风格，在必要时使用bind(...)，尽量避免使用self = this和箭头函数
 
 
 
+// 思考题
+var num = 1;
+var myObject = {
+    num: 2,
+    add: function() {
+        this.num = 3;
+        (function() {
+            console.log(this.num);      // window.num   1
+            this.num = 4;               // window.num = 4;
+        })();
+        console.log(this.num);          // myObject.num 3
+    },
+    sub: function() {
+        console.log(this.num)
+    }
+}
+myObject.add();
+console.log(myObject.num);              // 3
+console.log(num);                       // 4
+var sub = myObject.sub;
+sub();                                  // 4
+// result
+// 1
+// 3
+// 3
+// 4
+// 4
 
 
 
