@@ -663,3 +663,149 @@ function isUrl(url) {
 参考4-3.js
 
 96.介绍下前端加密的常见场景和方法
+HTTPS，加密，爬虫与反爬虫
+
+97.React和Vue的diff时间复杂度从O(n^3)优化到O(n)，那么O(n^3)和O(n)是如何计算出来的？
+
+98.写出如下代码的打印结果
+```
+// 函数的形参是值的传递，传递对象的话，函数接受的是这个对象的指针。
+// weiSite引用地址的值copy给o了
+function changeObjProperty(o) {
+    // 改变应用地址内的对象属性值
+    o.siteUrl = 'http://www.baidu.com';
+    // 变量o指向新的地址，以后的变动和旧地址无关
+    o = new Object();
+    o.siteUrl = 'http://www.google.com';
+}
+let webSite = new Object();
+changeObjProperty(webSite);
+console.log(webSite.siteUrl);
+```
+'http://www.baidu.com'
+
+99.用javascript写一个函数，输入int型，返回整数逆序后的字符串，如输入整型1234，返回字符串'4321'，要求必须使用递归函数调用，不能用全局变量，输入函数必须只有一个参数传入，必须返回字符串。
+参考99.js
+
+100.请写出如下代码的打印结果
+```
+function Foo() {
+    Foo.a = function() {
+        console.log(1)
+    }
+    this.a = function() {
+        console.log(2)
+    }
+}
+Foo.prototype.a = function() {
+    console.log(3)
+}
+Foo.a = function() {
+    console.log(4)
+}
+Foo.a();
+let obj = new Foo();
+obj.a();
+Foo.a();
+```
+4 - 2 - 1
+
+101.修改一下print函数，使之输出0-99，或者99-0.要求：只能修改setTimeout到Math.floor(Math.random() * 1000)的代码，不能修改Math.floor(Math.random() * 1000)，不能使用全局变量。
+```
+function print(n) {
+    setTimeout(() => {
+        console.log(n);
+    }, Math.floor(Math.random() * 1000))
+}
+for (var i = 0; i < 100; i++) {
+    print(i)
+}
+```
+```
+function print(n) {
+    setTimeout((() => {
+        console.log(n);
+    })(), Math.floor(Math.random() * 1000))
+}
+function print(n) {
+    setTimeout(console.log(n), Math.floor(Math.random() * 1000))
+}
+function print(n) {
+    setTimeout(() => {
+        console.log(n);
+    }, 1, Math.floor(Math.random() * 1000))
+}
+function print(n) {
+    setTimeout((() => {
+        console.log(n);
+    }).apply(n), Math.floor(Math.random() * 1000))
+}
+for (var i = 0; i < 100; i++) {
+    print(i)
+}
+```
+
+102.不用加减乘除运算符，求整数的7倍
+参考102.js
+
+103.模拟实现一个localStorage
+参考103.js
+
+104.模拟localStorage时如何实现过期时间功能
+略
+
+105.url有三种情况
+https://www.xx.cn/api?keyword=&level1=&local_batch_id=&elective=&local_province_id=33
+https://www.xx.cn/api?keyword=&level1=&local_batch_id=&elective=800&local_province_id=33
+https://www.xx.cn/api?keyword=&level1=&local_batch_id=&elective=800,700&local_province_id=33
+匹配elective后的数字输出(写出你认为的最优解法)
+[] || ['800'] || ['800', '700']
+
+```
+function getUrlValue(url) {
+    if (!url) return;
+    let res = url.match(/(?<=elective=)(\d+(,\d+)*)/);
+    return res ? res[0].split(',') : [];
+}
+new URLSearchParams(url).get('elective')        // IE不支持
+```
+
+106.分别写出如下代码的返回值
+String('11') == new String('11')        // true
+String('11') === new String('111')      // false
+new String返回的是对象，调用==隐式转换使用toString方法
+
+107.考虑到性能问题，如何快速从一个巨大的数组中随机获取部分元素。比如有个数组有100k个元素，从中不重复随机选取10k个元素。
+由于随机从100K个数据中随机选取10k个数据，可采用统计学中随机采样点的选取进行随机选取，如在0-50之间生成五个随机数，然后依次将每个随机数进行加50进行取值，性能应该是最好的。
+
+108.写出下面代码运行结果
+```
+var name = 'Tom';
+(function() {
+    if (typeof name == 'undefined') {
+        var name = 'Jack';
+        console.log('Goodbye ' + name);
+    } else {
+        console.log('Hello ' + name);
+    }
+})();
+```
+var name提升，先undefined，再赋值
+Goodbye Jack
+
+109.写出下面代码运行结果
+```
+var name = 'Tom';
+(function() {
+    if (typeof name == 'undefined') {
+        name = 'Jack';
+        console.log('Goodbye ' + name);
+    } else {
+        console.log('Hello ' + name);
+    }
+})();
+```
+作用域链上找name
+Hello Tom
+
+110.
