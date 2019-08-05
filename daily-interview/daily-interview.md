@@ -863,3 +863,30 @@ var output = {
 
 119.vue如何优化首页的加载速度？vue首页白屏时什么问题引起的？
 参考119.js
+
+120.为什么for循环嵌套顺序会影响性能？
+```
+var t1 = new Date().getTime()
+for (let i = 0; i < 100; i++) {
+  for (let j = 0; j < 1000; j++) {
+    for (let k = 0; k < 10000; k++) {
+    }
+  }
+}
+var t2 = new Date().getTime()
+console.log('first time', t2 - t1)
+
+for (let i = 0; i < 10000; i++) {
+  for (let j = 0; j < 1000; j++) {
+    for (let k = 0; k < 100; k++) {
+
+    }
+  }
+}
+var t3 = new Date().getTime()
+console.log('two time', t3 - t2)
+```
+两个循环的次数是一样的，但是j与k的初始化次数是不一样的。
+第一个循环的j的初始化次数是100次，k的初始化次数是10w次
+第二个循环的j的初始化次数是1w次，k的初始化次数是1000w次
+所以相同U型弄哈UN次数，外层越大，越影响性能
