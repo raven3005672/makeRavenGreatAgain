@@ -890,3 +890,43 @@ console.log('two time', t3 - t2)
 第一个循环的j的初始化次数是100次，k的初始化次数是10w次
 第二个循环的j的初始化次数是1w次，k的初始化次数是1000w次
 所以相同U型弄哈UN次数，外层越大，越影响性能
+
+121.统计1-n证书中出现1的次数
+```
+function findOne(n) {
+    let count = 0;
+    for (let i = 0; i <= n; i++) {
+        count += String(i).split('').filter(item => item === '1').length;
+    }
+    return count;
+}
+```
+
+122.webpack打包vue速度太慢怎么办
+webpack-bundle-analyzer对项目模块分析，针对性优化
+配置webpack的externals，防止将某些import的包打到bundle中，而是在运行时再去从外部获取这些扩展依赖【可以将体积大的库分离出来】
+// ...
+externals: {
+    'element-ui': 'Element',
+    'v-charts': 'VCharts'
+}
+在main.js中移除相关库的import
+在index.html模板文件中，添加相关库的cdn引用
+
+"打包慢"，是一个综合的因素，和vue关系不大。
+1：确保下webpack，npm, node 及主要库版本要新，比如：4.x比3.x提升很多。
+2：loader范围缩小到src项目文件！一些不必要的loader能关就关了吧
+3：eslint代码校验其实是一个很费时间的一个步奏。
+：可以把eslint的范围缩小到src,且只检查*.js 和 *.vue
+：生产环境不开启lint，使用pre-commit或者husky在提交前校验
+4：happypack多进程进行
+如果上面优化后，时间还是不满意的话，就尝试下5,6吧。
+5：动态链接库（DllPlugin），楼上已说。有点类似配置的externals。
+补充一下：
+缺点：将不能按需加载，会将配置的第三方库全部打包进去。
+推荐：可以将使用率较高的包采用dll方案。
+6：HardSourceWebpackPlugin会将模块编译后进行缓存，第一次之后速度会明显提升。
+
+
+123.vue是如何对数组方法进行变异的？例如push、pop、splice等方法
+参考123.js
