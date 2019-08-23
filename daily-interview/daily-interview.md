@@ -945,3 +945,47 @@ externals: {
 
 127.如何用css或js实现多行文本溢出省略效果，考虑兼容性
 参考127.css
+
+128.http状态码301和302的应用场景分别是什么
+参考124.js
+
+129.输出以下代码执行结果
+```
+function wait() {
+    return new Promise(resolve => 
+        setTimeout(resolve, 10 * 1000)
+    )
+}
+async function main() {
+    console.time();
+    const x = wait();
+    const y = wait();
+    const z = wait();
+    await x;
+    await y;
+    await z;
+    console.timeEnd();
+}
+main();
+```
+三个任务[x,y,z]发起的时候没有await，可以人为是同时发起了三个异步，之后各自await任务的结果。
+结果按照最高耗时计算，由于三个耗时一样，所以结果是10*1000ms
+如果const x = await wait(); 就可以得到30*1000ms以上的结果了
+
+130.输出以下代码执行结果
+```
+function wait() {
+    return new Promise(resolve =>
+        setTimeout(resolve, 10 * 1000)
+    )
+}
+async function main() {
+    console.time();
+    await wait();
+    await wait();
+    await wait();
+    console.timeEnd();
+}
+main();
+```
+30 * 1000 解释参考129
