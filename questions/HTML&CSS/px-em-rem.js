@@ -10,15 +10,15 @@
         <div class="child"></div>
     </div>
 </body>
-body {
-    font-size: 62.5%;   /* 1em = 10px */
-}
-.parent {
-    font-size: 2em;     /* 2em = 20px */
-}
-.child {
-    font-size: 2em;     /* 2em = 40px 相对于.parent元素 */
-}
+// body {
+//     font-size: 62.5%;   /* 1em = 10px */
+// }
+// .parent {
+//     font-size: 2em;     /* 2em = 20px */
+// }
+// .child {
+//     font-size: 2em;     /* 2em = 40px 相对于.parent元素 */
+// }
 // 使用时需要注意1em指的是父元素的字体大小
 
 // rem（root em）
@@ -30,10 +30,10 @@ body {
         </div>
     </body>
 </html>
-.parent {
-    font-size: 2rem;    /* 2rem = 20px */
-}
-.child {
-    font-size: 2rem;    /* 2rem = 20px */
-}
+// .parent {
+//     font-size: 2rem;    /* 2rem = 20px */
+// }
+// .child {
+//     font-size: 2rem;    /* 2rem = 20px */
+// }
 
