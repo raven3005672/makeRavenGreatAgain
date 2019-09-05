@@ -1012,4 +1012,9 @@ http请求头信息校验，host，user-agent，referer
 参考135.js
 
 136.如何实现骨架屏
-参考136.js
+puppeteer 饿了么 https://juejin.im/post/5bcc169ae51d450e85308d86
+https://github.com/Jocs/jocs.github.io/issues/22
+封装多个不同大小的模块、根据页面需求配置组合模块、请求数据并处理成功后替换
+
+137.如何在H5和小程序项目中计算白屏时间和首屏时间
+参考137.js
