@@ -9,6 +9,7 @@ async function async2() {
     console.log('async2');
 }
 console.log('script start');
+setImmediate(() => {console.log(100)})
 setTimeout(function() {
     console.log('setTimeout');
 }, 0)
@@ -32,7 +33,7 @@ console.log('script end');
 
 // 微任务
 // microtask，在当前task执行结束后立即执行的任务，也就是说，在当前task任务后，渲染之前。所以它的响应速度比setTimeout更快，因为无需等待渲染。
-// microtask主要包括：Promise.then, MutaionObserver, process.nextTick(node环境)
+// microtask主要包括：Promise.then, MutaionObserver(创建并返回一个新的MutationObserver，它会在指定的DOM发生变化时调用), process.nextTick(node环境)
 
 // 运行机制
 // 每一次循环称为tick，关键步骤如下：

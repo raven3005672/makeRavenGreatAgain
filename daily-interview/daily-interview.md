@@ -1021,3 +1021,5 @@ https://github.com/Jocs/jocs.github.io/issues/22
 
 138.反转链表，每k个节点反转一次，不足k就保持原有顺序
 参考138.js
+
+139.谈一谈nextTick的原理
