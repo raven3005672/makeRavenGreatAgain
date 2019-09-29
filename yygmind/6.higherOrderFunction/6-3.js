@@ -198,3 +198,6 @@ Array.prototype.filter = function(callbackfn, thisArg) {
     A.length = to;
     return A;
 }
+
+
+// https://github.com/yygmind/blog/issues/46
