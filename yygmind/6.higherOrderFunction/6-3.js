@@ -1,107 +1,200 @@
-// 深入浅出节流函数throttle
-
-// 函数节流指的是某个函数在一定时间间隔内(例如3秒)只执行一次，在这3秒内无视后来产生的函数调用请求，也不会延长时间间隔。
-// 3秒间隔结束后第一次遇到新的函数调用会触发执行，然后在这新的3秒内依旧无视后来产生的函数调用请求，以此类推。
-
-// 原理及实现
-// 函数节流非常适合用于函数被频繁调用的场景，例如：window.onresize事件，mousemove事件，上传进度等情况。
-// 实现方案有以下两种
-// 第一种是用时间戳来判断是否已到执行时间，记录上次执行的时间戳，然后每次触发事件执行回调，回调中判断当前时间戳距离上次执行时间戳的间隔是否已经达到时间差，如果是则执行，并更新上次执行的时间戳，如此循环。
-// 第二种方法是使用定时器，比如当scroll事件刚触发时，打印一个xxx，然后设置个1000ms的定时器，伺候每次触发scroll事件触发回调，如果存在定时器，则回调不执行方法，直到定时器触发，handler被清除，然后重新设置定时器。
-
-// 使用方案1
-const throttle = (fn, wait) => {
-    // 上一次执行fn的时间
-    let previous = 0;
-    // 将throttle处理结果当做函数返回
-    return function(...args) {
-        // 获取当前时间，转换成时间戳，单位毫秒
-        let now = +new Date();
-        // 将当前时间和上一次执行函数的时间进行对比
-        // 大于等待时间就把previous设置为当前时间并执行函数fn
-        if (now - previous > wait) {
-            previous = now;
-            // 执行fn函数
-            fn.apply(this, args);
+Array.prototype.map
+// 完整的结构是Array.prototype.map(callbackfn[, thisArg]), map函数接受两个参数，一个是必填项回调函数，另一个是可选项callbackfn函数执行时的this值。
+// map方法的主要功能就是把原数组中的每个元素按顺序执行一次callbackfn函数，并且把所有返回的结果组合在一起生成一个新的数组，map方法的返回值就是这个新数组。
+// 模拟实现
+Array.prototype.map = function(callbackfn, thisArg) {
+    // 异常处理
+    if (this == null) {
+        throw new TypeError('Cannot read property "map" of null or undefined');
+    }
+    // step 1. 转成数组对象，有length属性和k-v键值对
+    let O = Object(this);
+    // step 2. 无符号右移0位，左侧用0填充，结果非负
+    let len = O.length >>> 0;
+    // step 3. callbackfn不是函数时抛出异常
+    if (typeof callbackfn !== 'function') {
+        throw new TypeError(callbackfn + ' is not a function');
+    }
+    // step 4.
+    let T = thisArg;
+    // step 5.
+    let A = new Array(len);
+    // step 6.
+    let k = 0;
+    // step 7.
+    while (k < len) {
+        // Step 7.1/7.2/7.3
+        // 检查O机器原型链是否包含属性k
+        if (k in O) {
+            // step 7.3.1
+            let kValue = O[k];
+            // step 7.3.2
+            // 传入this，当前元素element，索引index，原数组对象O
+            let mappedValue = callbackfn.call(T, kValue, k, O);
+            // step 7.3.3 返回结果赋值给新生成数组
+            A[k] = mappedValue;
         }
+        // step 7.4
+        k++;
+    }
+    // step 7.5 返回新数组
+    return A;
+}
+
+// 核心就是在一个while循环中执行callbackfn，并传入4个参数，回调函数具体的执行逻辑这里并不关心，只需要拿到返回结果并赋值给新数组就好了。
+// 只有O机器原型链上包含属性k时才会执行callbackfn函数，所以对于稀疏数组empty元素或者使用delete删除后的索引则不会被调用
+let arr = [1, , 3, , 5]
+console.log(0 in arr) // true
+delete arr[0]
+console.log(0 in arr) // false
+console.log(arr) // [empty × 2, 3, empty, 5]
+arr.map(ele => {
+  console.log(ele) // 3, 5
+})
+// map并不会修改原数组，不过也不是绝对的，如果你在callbackfn中修改了原数组，那还是会改变。并且有可能影响到map自身的执行。
+// 原数组新增元素：因为map第一次执行时length已经确定了，所以不影响。
+// 原数组修改元素：传递给callbackfn的元素时map遍历到它们那一瞬间的值，所以可能受影响
+//      修改当前索引之前的元素，不受影响
+//      修改当前索引之后的元素，受影响
+// 原数组删除元素：被删除的元素无法被访问到，所以可能受影响
+//      删除当前索引之前的元素，已经访问过了，所以不受影响
+//      删除当前索引之后的元素，受影响
+
+// 例子
+// 1、原数组新增元素，不受影响
+let arr = [1, 2, 3]
+let result = arr.map((ele, index, array) => {
+  array.push(4);
+  return ele * 2
+})
+console.log(result) 
+// 2, 4, 6
+// ----------- 完美分割线 -----------
+// 2、原数组修改当前索引之前的元素，不受影响
+let arr = [1, 2, 3]
+let result = arr.map((ele, index, array) => {
+  if (index === 1) {
+    array[0] = 4
+  }
+  return ele * 2
+})
+console.log(result) 
+// 2, 4, 6
+// ----------- 完美分割线 -----------
+// 3、原数组修改当前索引之后的元素，受影响
+let arr = [1, 2, 3]
+let result = arr.map((ele, index, array) => {
+  if (index === 1) {
+    array[2] = 4
+  }
+  return ele * 2
+})
+console.log(result) 
+// 2, 4, 8
+
+// 源码中callbackfn.call(T, kValue, k, O)，其中T就是thisArg值，如果没有设置，那就是undefined。
+// 对于call方法，传入undefined时，非严格模式下指向window，严格模式下为undefined。记住这时候回调函数不能用箭头函数，因为箭头函数是没有自己的this的。
+
+// 1、传入 thisArg 但使用箭头函数
+let name = 'Muyiy'
+let obj = {
+    name: 'Hello',
+    callback: (ele) => {
+        return this.name + ele
     }
 }
-// 执行throttle函数返回新函数
-const betterFn = throttle(() => console.log('fn run'), 1000);
-// 每10毫秒执行一次betterFn函数，但是只有时间差大于1000时才会执行fn
-setInterval(betterFn, 10);
-
-
-// underscore源码解读
-// underscore实现了两个新增的功能
-// 配置是否需要响应事件刚开始的那次回调(leading参数，false时忽略)
-// 配置是否需要响应事件结束后的那次回调(trailing参数，false时忽略)
-// 配置{leading: false}时，事件刚开始的那次回调不执行；配置{trailing：false}时，事件结束后的那次回调不执行，不过需要注意的是，这两者不能同时配置。
-// 所以在underscore中的节流函数有3中调用方式，默认的(有头有尾)，设置{leading: false}的，以及设置{trailing: false}的。
-// underscore采用两种方案搭配使用来实现功能
-const throttle = function(func, wait, options) {
-    var timeout, context, args, result;
-    // 上一次执行回调的时间戳
-    var previous = 0;
-    // 无传入参数时，初始化options为空对象
-    if (!options) options = {};
-    var later = function() {
-        // 当设置{leading: false}时
-        // 每次触发回调函数后设置previous为0
-        // 不然为当前时间
-        previous = options.leading === false ? 0 : _.now();
-        // 防止内存泄漏，置为null便于后面根据!timeout设置新的timeout
-        timeout = null;
-        // 执行函数
-        result = func.apply(context, args);
-        if (!timeout) context = args = null;
-    };
-    // 每次触发事件回调都执行这个函数
-    // 函数内判断是否执行func
-    // func才是我们业务层代码想要执行的函数
-    var throttled = function() {
-        // 记录当前时间
-        var now = _.now();
-        // 第一次执行时（此时previous为0，之后为上一次时间戳）
-        // 并且设置了{leading: false}（表示第一次回调不执行）
-        // 此时设置previous为当前值，表示刚执行过，本次就不执行了
-        if (!previous && options.leading === false) previous = now;
-        // 距离下次触发func还需要等待的时间
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-        // 要么是到了间隔时间了，随机触发方法(remaining <= 0)
-        // 要么是没有传入{leading: false}，且第一次触发回调，即立即触发
-        // 此时previous为0，wait - (now - previous)也满足 <= 0
-        // 之后便会把previous值迅速置为now
-        if (remaining <= 0 || remaining > wait) {
-            if (timeout) {
-                clearTimeout(timeout);
-                // clearTimeout(timeout)并不会把timeout设为null
-                // 手动设置，便于后续判断
-                timeout = null;
-            }
-            // 设置previous为当前时间
-            previous = now;
-            // 执行func函数
-            result = func.apply(context, args);
-            if (!timeout) context = args = null;
-        } else if (!timeout && options.trailing !== false) {
-            // 最后一次需要触发的情况
-            // 如果已经存在一个定时器，则不会进入该if分支
-            // 如果{trailing: false}，即最后一次不需要出发了，也不会进入这个分支
-            // 间隔时间remaining milliseconds后触发later方法
-            timeout = setTimeout(later, remaining);
-        }
-        return result;
-    };
-    // 手动取消
-    throttled.cancel = function() {
-        clearTimeout(timeout);
-        previous = 0;
-        timeout = context = args = null;
-    };
-    // 执行_.throttle返回throttled函数
-    return throttled;
+let arr = [1, 2, 3]
+let result = arr.map(obj.callback, obj);
+console.log(result) 
+// ["1", "2", "3"]，此时 this 指向 window
+// 那为啥不是 "Muyiy1" 这样呢，不急，第 3 步介绍
+// ----------- 完美分割线 -----------
+// 2、传入 thisArg，使用普通函数
+let name = 'Muyiy'
+let obj = {
+    name: 'Hello',
+    callback: function (ele) {
+        return this.name + ele
+    }
 }
+let arr = [1, 2, 3]
+let result = arr.map(obj.callback, obj);
+console.log(result) 
+// ["Hello1", "Hello2", "Hello3"]，完美
+// ----------- 完美分割线 -----------
+// 3、不传入 thisArg，name 使用 let 声明
+let name = 'Muyiy'
+let obj = {
+    name: 'Hello',
+    callback: function (ele) {
+        return this.name + ele
+    }
+}
+let arr = [1, 2, 3]
+let result = arr.map(obj.callback);
+console.log(result)
+// ["1", "2", "3"]
+// 为什么呢，因为 let 和 const 声明的变量不会挂载到 window 上
+// ----------- 完美分割线 -----------
+// 4、不传入 thisArg，name 使用 var 声明
+var name = 'Muyiy'
+let obj = {
+    name: 'Hello',
+    callback: function (ele) {
+        return this.name + ele
+    }
+}
+let arr = [1, 2, 3]
+let result = arr.map(obj.callback);
+console.log(result)
+// ["Muyiy1", "Muyiy2", "Muyiy3"]
+// 看看，改成 var 就好了
+// ----------- 完美分割线 -----------
+// 5、严格模式
+'use strict'
+var name = 'Muyiy'
+let obj = {
+    name: 'Hello',
+    callback: function (ele) {
+        return this.name + ele
+    }
+}
+let arr = [1, 2, 3]
+let result = arr.map(obj.callback);
+console.log(result)
+// TypeError: Cannot read property 'name' of undefined
+// 因为严格模式下 this 指向 undefined
 
+
+
+Array.prototype.filter
+// 完整的结构是Array.prototype.filter(callbackfn[, thisArg])，和map是一样的。
+// filter字如其名，它的主要功能就是过滤，callbackfn执行结果如果是true就返回当前元素，false则不返回，返回的所有元素组合在一起生成新数组，并返回。如果没有任何元素通过测试，则返回空数组。
+// 这部分源码相比map而言，多了一步判断callbackfn的返回值。
+// 模拟实现
+Array.prototype.filter = function(callbackfn, thisArg) {
+    // 异常处理
+    if (this == null) {
+        throw new TypeError('Cannot read property "map" of null or undefined');
+    }
+    if (typeof callbackfn !== 'function') {
+        throw new TypeError(callbackfn + ' is not a function');
+    }
+    let O = Object(this), len = O.length >>> 0,
+        T = thisArg, A = new Array(len), k = 0;
+    // 新增，返回数组的索引
+    let to = 0;
+    while (k < len) {
+        if (k in O) {
+            let kValue = O[k];
+            // 新增
+            if (callbackfn.call(T, kValue, k, O)) {
+                A[to++] = kValue;
+            }
+        }
+        k++;
+    }
+    // 新增，修改length，初始值为len
+    A.length = to;
+    return A;
+}

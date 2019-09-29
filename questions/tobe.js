@@ -177,3 +177,80 @@ Function.prototype.bindFn = function bind(thisArg) {
 // pushState
 // replactState
 // 添加和修改历史记录条目
+
+实现debounce实现throttle
+实现bind,call,apply
+打印出来html里所有标签
+实现一个lazyman
+实现一个deepclone
+实现快速排序
+实现一个数组乱序
+实现一个Promise
+实现一个LRU
+求第K大树
+二叉树的深度
+两数之和
+四数之和
+找出一个集合所有的子集
+
+flex 已经是移动端的标配了。今年面试中基本很多都考察flex。所以对于flex-grow和flex-shrink，flex-direction 这些属性必须灵活掌握。而且对于弹性盒里面的元素的是否会被缩减，以及缩减的规则都会被考察到。对于高级前端一些深度的特性也会被考察到。
+
+vertical-align 为什么没有绝对垂直居中？
+line-height 的具体含义是什么？
+
+http2 是今年一个必考题了。所以HTTP2 分帧的，多路复用，server push 这些都得深度掌握，只肤浅理解到基本概念 还是很容易被问住的。推荐大家看两篇文章 MDN HTTP
+另外缓存(协商缓存和强缓存)，跨域 这些都不赘述了。
+
+
+Virtual Dom 是否可以提高性能？
+怎么看待Dom Diff？Dom Diff算法是啥？
+如何设计一个组件？
+Vue发展问题在哪里？
+
+
+Web性能啥时候都是一个必考题。针对Web性能。推荐大家看Google的文档。
+Webpack 
+webpack 基本会考察到各种loader，plugin的名字和使用方法 
+
+用过哪些插件？
+如何做性能优化？
+code split 怎么做？
+什么是treeshaking？注意些什么？
+
+
+移动端
+JSBridge 原理 和 离线包成了必考题。
+
+移动端如何做适配？
+一像素问题怎么解决？
+JSBridge原理是什么？如何设计一个JSBridge？
+离线包怎么设计？
+Hybrid H5开发需要注意些什么？
+Webview的缓存机制是什么？
+
+直播方向
+直播协议都有什么？
+WebRTC是什么？基本原理是什么？
+
+
+Nodejs
+高级码农都或多或少写过一些nodejs。但是nodejs 的面试问题很难准备。平时可能写的很6，但是面试不一定能答得出来。通常大家都会问你的Nodejs在处理什么模块。 
+项目中的中间层Node 在处理什么问题？
+Node 的Cluster模式是什么？
+Node 中的进程和线程啥区别？
+Node 中如何创建一个进程？
+Node的多个进程如何通信？
+Koa2 中的 context如何实现？
+如何监控Node？
+Node中的日志如何保整串行？
+Node 挂掉怎么办？怎么发现其中的问题？
+Node中的事件循环是什么？
+
+
+安全
+HTTPS原理是什么？
+如何劫持HTTPS？
+XSS 是什么？如何防范？
+CSRF是什么？如何防范？
+如何应对重放攻击？
+
