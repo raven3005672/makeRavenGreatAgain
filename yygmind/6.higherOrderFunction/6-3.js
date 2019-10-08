@@ -198,6 +198,88 @@ Array.prototype.filter = function(callbackfn, thisArg) {
     A.length = to;
     return A;
 }
+// 改动点在于判断callbackfn返回值，新增索引to，这样主要避免使用k时生成空元素，并在返回之前修改length值。
+
+
+
+Array.prototype.reduce
+// reduce完整的结构是Array.prototype.reduce(callbackfn[, initialValue]),这里第二个参数并不会thisArg了，而是初始值initialValue，关于初始值之前有介绍过。
+// 如果没有提供initialValue，那么第一次调用callback函数时，accumlator使用原数组中的第一个元素，currentValue即时数组中的第二个元素。
+// 如果提供了initialValue，accumulator将使用这个初始值，currentValue使用原数组中的第一个元素。
+// 在没有初始值的空数组上调用reduce将报错
+Array.prototype.reduce = function(callbackfn, initialValue) {
+    // 异常处理
+    if (this == null) {
+        throw new TypeError('Cannot read property "map" of null of undefined');
+    }
+    if (typeof callbackfn !== 'function') {
+        throw new TypeError(callbackfn + ' is not a function')
+    }
+    let O = Object(this);
+    let len = O.length >>> 0;
+    let k = 0, accumulator;
+    // 新增
+    if (initialValue) {
+        accumulator = initialValue
+    } else {
+        if (len === 0) {
+            throw new TypeError('Reduce of empty array with no initial value');
+        }
+        let kPresent = false;
+        while (!kPresent && (k < len)) {
+            kPresent = k in O;
+            if (kPresent) {
+                accumulator = O[k];
+            }
+            k++;
+        }
+    }
+    while(k < len) {
+        if (k in O) {
+            let kValue = O[k];
+            accumulator = callbackfn.call(undefined, accumulator, kValue, k, O);
+        }
+        k++;
+    }
+    return accumulator;
+}
+// 这部分源码主要多了对于initialValue的处理，有初始值时比较简单，即accumulator = initialValue，kValue = O[0]
+// 无初始值处理，新欢判断当O及其原型链上存在属性k时，accumulator = O[k]并退出循环，因为k++，所以kValue = O[k++]
+
+// 更多的数组方法有find、findIndex、forEach等，其源码实现也是大同小异，无非就是在callbackfn.call这部分做些处理。
+
+// 注意forEach的源码和map很相同，在map的源码基础上做些改造就行了。
+Array.prototype.forEach = function(callbackfn, thisArg) {
+    // 相同
+    // ...
+    while (k < len) {
+        if (k in O) {
+            let kValue = O[k];
+            // 这部分是map
+            // let mappedValue = callbackfn.call(T, kValue, k, O);
+            // A[k] = mappedValue;
+            
+            // 这部分是forEach
+            callbackfn.call(T, kValue, k, O);
+        }
+        k++;
+    }
+    // 返回undefined
+    return undefined;
+}
+// 不同之处在于不处理callbackfn执行的结果，也不返回。
+// 特意指出来是因为在此之前看到过一种错误的说法，叫做forEach会跳过空，但是map不跳过
+// 为什么说map不跳过呢，因为原始数组有empty元素时，map返回的结果也有empty元素，所以不跳过，但是这种说法并不正确。
+let arr = [1, , 3, , 5];
+console.log(arr);   // [1, empty, 3, empty, 5]
+let result = arr.map(ele => {
+    console.log(ele)    // 1, 3, 5
+    return ele;
+})
+console.log(result);    // [1, empty, 3, empty, 5]
+// 看ele输出就会明白map也是跳空的，原因就在于源码中的k in O，这里是检查O及其原型链是否包含属性k，所以有的实现中庸hasOwnProperty也是不正确的。
+// 另外callbackfn中不可以使用break跳出循环，是因为break只能跳出循环，而callbackfn并不是循环体。如果有类似的需求可以使用for...of、for...in、some、every等。
+
 
 
 // https://github.com/yygmind/blog/issues/46
