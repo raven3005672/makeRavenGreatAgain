@@ -1,62 +1,94 @@
-// 详细原文见https://zhuanlan.zhihu.com/p/53599723
+<!-- 详细原文见https://zhuanlan.zhihu.com/p/53599723 -->
+# Vuex-Flux-Redux-ReduxSaga-Dva-MobX
 
-// 目标 => 管理状态state、共享状态
-// 解决思路 => 把组件之间需要共享的状态抽取出来，遵循特定的约定，统一来管理，让状态的变化可以预测。
+目标 => 管理状态state、共享状态
+通用思想 => 隔离变化、约定优于配置等
+解决思路 => 把组件之间需要共享的状态抽取出来，遵循特定的约定，统一来管理，让状态的变化可以预测。
 
-Store模式
-// 最简单的处理就是把状态存到一个外部变量里面，当然也可以是一个全局变量。但是这样造成一个问题：数据改变后，不会留下变更过的记录，这样不利于调试。
-// 一个简单的stroe模式
+## Store模式
+
+最简单的处理就是把状态存到一个外部变量里面，当然也可以是一个全局变量。但是这样造成一个问题：数据改变后，不会留下变更过的记录，这样不利于调试。
+```
+// 一个简单的store模式
 var store = {
     state: {
-      message: 'Hello!'
+        message: 'Hello!'
     },
     setMessageAction (newValue) {
-      // 发生改变记录点日志啥的
-      this.state.message = newValue
+        // 发生改变记录点日志啥的
+        this.state.message = newValue
     },
     clearMessageAction () {
-      this.state.message = ''
+        this.state.message = ''
     }
 }
-// store的state来存数据，store里面有一堆action，通过这些action来控制state的改变。
-// 这个例子没有限制组件里面不能修改store里面的state。
-// 所以规定一下，组件不允许直接修改属于store实例的state，组件必须通过action来改变state。
-// 这样约定的好处是，我们能够记录所有store中发生的state改变，同时实现能做到记录变更、保存状态快照、历史回滚/时光旅行的先进的调试工具。
+```
 
+store的state来存数据，store里面有一堆action，通过这些action来控制state的改变。
+这个例子没有限制组件里面不能修改store里面的state。
+所以规定一下，组件不允许直接修改属于store实例的state，组件必须通过action来改变state。
+这样约定的好处是，我们能够记录所有store中发生的state改变，同时实现能做到记录变更、保存状态快照、历史回滚/时光旅行的先进的调试工具。
 
-Flux
-// Flux其实是一种思想，他给出了一些基本概念，所有的框架都可以根据他的思想来做一些实现。
-// Flux把一个应用分成了四个部分：View Action Dispatcher Store
+## Flux（Store + Action，最大特点：单向数据流）
 
-// View用来展示数据（Store）
-// 一旦Store发生改变，都会往外面发送一个事件，通知所有的订阅者（或者观察者）。
-// Dispatcher的作用是接受所有的Action，然后发给所有的Store。
-// Store的改变只能通过Action，所以Store不应该有公开的Setter，所有Setter都应该是私有的，只能有公开的Getter。
-// Flux的最大特点就是数据都是单向流动的。action => dispatcher => store => view => action
+Flux其实是一种思想，他给出了一些基本概念，所有的框架都可以根据他的思想来做一些实现。
+Flux把一个应用分成了四个部分：View、Action、Dispatcher、Store。
 
+View用来展示数据（Store）
+一旦Store发生改变，都会往外面发送一个事件，通知所有的订阅者（或者观察者）。
+Dispatcher的作用是接受所有的Action，然后发给所有的Store。
+Store的改变只能通过Action，所以Store不应该有公开的Setter，所有Setter都应该是私有的，只能有公开的Getter。
+Flux的最大特点就是数据都是单向流动的。action => dispatcher => store => view => action
 
-Redux
-// Flux有一些特点，一个应用可以拥有多个Store，多个Store之间可能有依赖关系；Store封装了数据还有处理数据的逻辑。
-// 一般使用时，会使用Redux，与Flux思想类似，也有所差别。
-// Store
-// Redux里面只有一个Store，Store的State不能直接修改，每次只能返回一个新的State。Redux用createStore函数来生成Store。
+## Redux（唯一Store）
+
+Flux有一些特点，一个应用可以拥有多个Store，多个Store之间可能有依赖关系；Store封装了数据还有处理数据的逻辑。
+一般使用时，会使用Redux，与Flux思想类似，也有所差别。
+
+### Store
+
+Redux里面只有一个Store，Store的State不能直接修改，每次只能返回一个新的State。Redux用createStore函数来生成Store。
+```
 import {createStore} from 'redux';
 const store = createStore(fn);
-// Store允许使用store.subscribe方法设置监听函数，一旦State发生变化，就自动执行这个函数。
-// Action
-// Action是View发出的通知，告诉Store State要改变，Action必须有一个type属性，代表Action的名称，其他可以设置一堆属性，作为参数供State变更时参考。
-// Reducer
-// Redux没有Dispatcher的概念，Store里面已经继承了dispatch方法。store.dispatch()是View发出Action的唯一方法。
+```
+
+Store允许使用store.subscribe方法设置监听函数，一旦State发生变化，就自动执行这个函数。不管View是用什么实现的，只要把View的更新函数subscribe一下，就可以实现State变化之后，View自动渲染了。比如在React里，把组件的render方法或setState方法订阅进去就行。
+
+### Action
+
+Action是View发出的通知，告诉Store State要改变，Action必须有一个type属性，代表Action的名称，其他可以设置一堆属性，作为参数供State变更时参考。
+```
+const action = {
+  type: 'ADD_TODO',
+  payload: 'Learn Redux'
+}
+```
+
+Redux可以用Action Creator批量来生成一些Action
+
+### Reducer
+
+Redux没有Dispatcher的概念，Store里面已经继承了dispatch方法。store.dispatch()是View发出Action的唯一方法。
+```
+import {createSOtre} from 'redux';
+const store = createStore(fn);
 store.dispatch({
   type: "ADD_TODO",
   payload: "Learn Redux"
 })
-// Redux用一个叫做Reducer的纯函数来处理事件。Store收到Action以后，必须给出一个新的State。
-// 纯函数是指没有任何副作用的函数【具体略，已掌握】
-// (previousState, action) => newState
+```
+
+Redux用一个叫做Reducer的纯函数来处理事件。Store收到Action以后，必须给出一个新的State。
+纯函数是指没有任何副作用的函数【具体略，已掌握】，对于相同的输入，永远都只会有相同的输出，不会影响外部的变量，也不会被外部变量影响，不得改写参数。
+```
+(previousState, action) => newState
 // 类比Flux: (state, action) => state
-// reduce是一个函数式编程的概念，经常和map放在一起说，简单来说，map就是映射，reduce就是归纳。
-// 映射就是把一个列表按照一定规则映射成另一个列表，而reduce是把一个列表通过一定规则进行合并，也可以理解为对初始值进行一系列的操作，返回一个新的值。
+```
+
+reduce是一个函数式编程的概念，经常和map放在一起说，简单来说，map就是映射，reduce就是归纳。
+映射就是把一个列表按照一定规则映射成另一个列表，而reduce是把一个列表通过一定规则进行合并，也可以理解为对初始值进行一系列的操作，返回一个新的值。
+```
 // 声明reducer:
 const defaultState = 0;
 const reducer = (state = defaultState, action) => {
@@ -67,9 +99,16 @@ const reducer = (state = defaultState, action) => {
       return state;
   }
 }
-// createStore接受reducer作为参数，生成一个新的store。以后每当store.dispatch发送过来一个新的Action，就会自动调用Reducer，得到新的State。
+```
+
+createStore接受Reducer作为参数，生成一个新的Store。以后每当store.dispatch发送过来一个新的Action，就会自动调用Reducer，得到新的State。
+```
 import {createStore} from 'redux';
-const store = createSotre(reducer);
+const store = createStore(reducer);
+```
+
+createStore内部做了什么？参考如下简单的createStore的实现：
+```
 // createStore内部简单实现：
 const createStore = (reducer) => {
   let state;
@@ -88,15 +127,24 @@ const createStore = (reducer) => {
   dispatch({});
   return {getState, dispatch, subscribe};
 }
-// Redux里每一个Reducer负责维护State树里面的一部分数据，多个Reducer可以通过combineReducers方法合成一个根Reducer，这个根Reducer负责维护整个State。
+```
+
+Redux有很多的Reducer，对于大型应用来说，State必然十分庞大，导致Reducer函数也十分庞大，所以需要拆分。
+Redux里每一个Reducer负责维护State树里面的一部分数据，多个Reducer可以通过combineReducers方法合成一个根Reducer，这个根Reducer负责维护整个State。
+```
 import {combineReducers} from 'redux';
-const chatReducer = combineReducers({   // 这种简写形式，State的属性名必须与子Reducer同名
+// 这种简写形式，State的属性名必须与子Reducer同名
+const chatReducer = combineReducers({
   Reducer1, Reducer2, Reducer3
 })
+```
+
+combineReducers内部做了什么事？参考如下简单的combineReducers实现：
+```
 // combineReducers的简单实现
 const combineReducers = reducers => {
   return (state = {}, action) => {
-    return Object.keys(reducers).reducer(
+    return Object.keys(reducers).reduce(
       (nextState, key) => {
         nextState[key] = reducers[key](state[key], action);
         return nextState;
@@ -105,37 +153,65 @@ const combineReducers = reducers => {
     );
   };
 };
-// Redux流程
-// 1.用户通过View发出Action
-store.dispatch(action);
-// 2.然后Store自动调用Reducer，并且传入两个参数，当前State和收到的Action。Reducer会返回新的State。
-let nextState = xxxReducer(previousState, action);
-// 3.State一旦有变化，Store就会调用监听函数
-store.subscribe(listener);
-// 4.listener可以通过store.getState()得到当前状态。如果使用的是React，这是可以触发重新渲染View。
-function listener() {
-  let newState = store.getState();
-  component.setState(newState);
-}
+```
 
-// 对比Flux
-// Flux中Store是各自为战的，每个Store只对对应的View负责，每次更新都只通知对应的View
-// Redux中各子Reducer都是由根Reducer统一管理的，每个子Reducer的变化都要经过根Reducer的整合
-// 简单来说，Redux有三大原则：单一数据源(Flux数据源可以是多个)，State只读(Flux的State可以随便改)，Reducer纯函数执行修改(Flux执行修改的不一定是纯函数)。
-// Redux和Flux一样都是单向数据流
+### Redux流程
 
-// 中间件
-// 实际项目中，一般都会有同步和异步操作，所以Flux、Redux之类的思想，最终都要落地到同步异步的处理中来。
-// Redux中，同步的表现就是：Action发出以后，Reducer立即算出State。那么异步的表现就是：Action发出以后，过一段时间再执行Reducer。
-// Redux引入了中间件Middleware的概念
-// 在View里发送Action的时候，加上一些异步操作。比如下面的代码，给原来的dispatch方法包裹了一层，加上了一些日志打印的功能：
+1. 用户通过View发出Action
+    ```
+    store.dispatch(action);
+    ```
+
+2. 然后Store自动调用Reducer，并且传入两个参数，当前State和收到的Action。Reducer会返回新的State。
+    ```
+    let nextState = xxxReducer(previousState, action);
+    ```
+
+3. State一旦有变化，Store就会调用监听函数
+    ```
+    store.subscribe(listener);
+    ```
+
+4. listener可以通过store.getState()得到当前状态。如果使用的是React，这是可以触发重新渲染View。
+    ```
+    function listener() {
+      let newState = store.getState();
+      component.setState(newState);
+    }
+    ```
+
+### 对比Flux
+
+Flux中Store是各自为战的，每个Store只对对应的View负责，每次更新都只通知对应的View
+Redux中各子Reducer都是由根Reducer统一管理的，每个子Reducer的变化都要经过根Reducer的整合
+
+简单来说，Redux有三大原则：
+
+* 单一数据源(Flux数据源可以是多个)
+* State只读(Flux的State可以随便改)
+* Reducer纯函数执行修改(Flux执行修改的不一定是纯函数)。
+
+Redux和Flux一样都是单向数据流
+
+## 中间件
+
+实际项目中，一般都会有同步和异步操作，所以Flux、Redux之类的思想，最终都要落地到同步异步的处理中来。
+Redux中，同步的表现就是：Action发出以后，Reducer立即算出State。那么异步的表现就是：Action发出以后，过一段时间再执行Reducer。
+Redux引入了中间件Middleware的概念。
+在View里发送Action的时候，加上一些异步操作。比如下面的代码，给原来的dispatch方法包裹了一层，加上了一些日志打印的功能：
+```
 let next = store.dispatch;
 store.dispatch = function dispatchAndLog(action) {
   console.log('dispatching', action);
   next(action);
   console.log('next state', store.getState());
 }
-// 详细了解Redux中间件  https://cn.redux.js.org/docs/advanced/Middleware.html
+```
+
+详细了解Redux中间件，参考Redux-middleware.md
+<!-- https://cn.redux.js.org/docs/advanced/Middleware.html -->
+
+
 
 // Redux提供了一个applyMiddleware方法来应用中间件：
 // 这个方法主要就是把所有的中间件组成一个数组，依次执行，也就是说，任何被发送到store的action现在都会经过thunk，promise，logger这几个中间件了
