@@ -211,22 +211,28 @@ store.dispatch = function dispatchAndLog(action) {
 详细了解Redux中间件，参考Redux-middleware.md
 <!-- https://cn.redux.js.org/docs/advanced/Middleware.html -->
 
-
-
-// Redux提供了一个applyMiddleware方法来应用中间件：
-// 这个方法主要就是把所有的中间件组成一个数组，依次执行，也就是说，任何被发送到store的action现在都会经过thunk，promise，logger这几个中间件了
+Redux提供了一个applyMiddleware方法来应用中间件：
+```
 const store = createStore(
   reducer,
   applyMiddleware(thunk, promise, logger)
 )
-// 处理异步
-// 对于异步操作来说，有两个非常关键的时刻：发起请求的时刻，和接受到响应的时刻（可能成功，也可能失败或者超时），这两个时刻都可能会更改应用的state。
-// 一般过程如下：
-// 1.请求开始时，dispatch一个请求action，触发state更新为“正在请求”状态，View重新渲染，比如展现个Loading之类。
-// 2.请求结束后，如果成功，dispatch一个请求成功Action，隐藏掉Loading，把新的数据更新到State；如果失败，dispatch一个请求失败Action，隐藏掉Loading，给个失败提示。
-// 大多数选择一些现成的支持异步处理的中间件。比如redux-thunk或者redux-promise
+```
 
-// Redux-thunk
+这个方法主要就是把所有的中间件组成一个数组，依次执行，也就是说，任何被发送到store的action现在都会经过thunk，promise，logger这几个中间件了
+
+### 处理异步
+
+对于异步操作来说，有两个非常关键的时刻：发起请求的时刻，和接收到响应的时刻（可能成功，也可能失败或者超时），这两个时刻都可能会更改应用的state。一般过程如下：
+
+1. 请求开始时，dispatch一个请求action，触发state更新为“正在请求”状态，View重新渲染，比如展现个Loading之类。
+2. 请求结束后，如果成功，dispatch一个请求成功Action，隐藏掉Loading，把新的数据更新到State；如果失败，dispatch一个请求失败Action，隐藏掉Loading，给个失败提示。
+
+大多数选择一些现成的支持异步处理的中间件。比如redux-thunk或者redux-promise
+
+### Redux-thunk
+
+```
 const createFetchDataAction = function(id) {
   return function(dispatch, getState) {
     // 开始请求，dispatch一个FETCH_DATA_START action
@@ -260,7 +266,11 @@ const reducer = function(oldState, action) {
     // 提示异常
   }
 }
-// Redux-promise
+```
+
+### Redux-promise
+
+```
 const FETCH_DATA = "FETCH_DATA";
 // action creator
 const getData = function(id) {
@@ -280,15 +290,20 @@ const reducer = function(oldState, action) {
       }
   }
 }
-// 封装少，自由度高，但是代码就会变复杂；封装多，代码变简单了，但是自由度就会变差。
+```
 
+封装少，自由度高，但是代码就会变复杂；封装多，代码变简单了，但是自由度就会变差。
 
-Vuex
-// 主要用于Vue，和Flux，Redux的思想很类似
-Store
-// 每一个Vuex里面有一个全局的Store，包含着应用中的状态State，这个State只是需要在组件中共享的数据，不用放所有的State。
-// 和Redux类似，一个应用仅会包含一个Store实例。单一状态树能够直接定位任一特定的状态片段，在调试的过程中也能轻易地取得整个当前应用状态的快照。
-// Vuex通过store选项，把state注入到了整个应用中，这样子组件能够通过this.\$store访问到state
+## Vuex
+
+主要用于Vue，和Flux，Redux的思想很类似
+
+### Vuex里的Store
+
+每一个Vuex里面有一个全局的Store，包含着应用中的状态State，这个State只是需要在组件中共享的数据，不用放所有的State。和Redux类似，一个应用仅会包含一个Store实例。单一状态树能够直接定位任一特定的状态片段，在调试的过程中也能轻易地取得整个当前应用状态的快照。
+
+Vuex通过store选项，把state注入到了整个应用中，这样子组件能够通过this.$store访问到state。
+```
 const app = new Vue({
   el: '#app',
   // 把store对象提供给“store”选项，这可以把store的实例注入所有的子组件
@@ -304,10 +319,14 @@ const Counter = {
     }
   }
 }
-// State改变，View就会跟着改变，这个改变利用的是Vue的响应式机制
-Mutation
-// 显而易见，State不能直接改，需要通过一个约定的方式，这个方式在Vuex里面叫做mutation，更改Vuex的store中的状态的唯一方法是提交mutation。
-// Vuex中的mutation非常类似于事件：每个mutation都有一个字符串的事件类型（type）和一个回调函数（handler）
+```
+
+State改变，View就会跟着改变，这个改变利用的是Vue的响应式机制
+
+### Mutation
+
+显而易见，State不能直接改，需要通过一个约定的方式，这个方式在Vuex里面叫做mutation，更改Vuex的store中的状态的唯一方法是提交mutation。Vuex中的mutation非常类似于事件：每个mutation都有一个字符串的事件类型（type）和一个回调函数（handler）。
+```
 const store = new Vuex.Store({
   state: {
     count: 1
@@ -319,30 +338,39 @@ const store = new Vuex.Store({
     }
   }
 })
-// 触发mutation事件的方式不是直接调用，比如increment(state)是不行的，而要通过store.commit方法：
+```
+
+触发mutation事件的方式不是直接调用，比如increment(state)是不行的，而要通过store.commit方法：
+```
 store.commit('increment')
-// 注意：mutation都是同步事务
-// mutation有些类似Redux的Reducer，但是Vuex不要求每次都搞一个新的State，可以直接修改State，这里又和Flux有些类似。
+```
 
-// 到这里，可以感受到Flux、Redux、Vuex三个的思想都差不多，再具体细节上有一些差异，总的来说都是让View通过某种凡是触发Store的事件或方法，
-// Store的事件或方法对State进行修改或返回一个新的State，State改变之后，View发生响应式改变。
-Action
-// mutations是必须同步的，对比Redux的中间件，Vuex加入了Action来处理异步，Vuex的想法是把同步和异步拆分开。
-// View通过store.dispatch('increment')来触发某个Action，Action里面不管执行多少异步操作，完事之后都通过store.commit('increment')来触发mutmapActions，
-// 一个Action里面可以触发多个mutation。所以Vuex的Action类似于一个灵活好用的中间件。
+注意：mutation都是同步事务。
+mutation有些类似Redux的Reducer，但是Vuex不要求每次都搞一个新的State，可以直接修改State，这里又和Flux有些类似。
 
+到这里，可以感受到Flux、Redux、Vuex三个的思想都差不多，再具体细节上有一些差异，总的来说都是让View通过某种方式触发Store的事件或方法，Store的事件或方法对State进行修改或返回一个新的State，State改变之后，View发生响应式改变。
 
-对比Redux
-// Reudx: view => actions => reducer => state变化 => view变化(同步异步一样) 
-// Vuex: view => commit => mutations => state变化 => view变化(同步操作)
-      // view => dispatch => actions => mutations => state变化 => view变化(异步操作)
+### Vuex里的Action
 
+mutations是必须同步的，对比Redux的中间件，Vuex加入了Action来处理异步，Vuex的想法是把同步和异步拆分开。
+View通过store.dispatch('increment')来触发某个Action，Action里面不管执行多少异步操作，完事之后都通过store.commit('increment')来触发mutation，一个Action里面可以触发多个mutation。所以Vuex的Action类似于一个灵活好用的中间件。
 
-React-redux
-// Redux和Flux类似，只是一种思想或者规范。
-// React包含函数式的思想，也是单向数据流，和Redux很搭，所以一般都用Redux来进行状态管理。
-// 为了简单处理Redux和ReactUI的绑定，一般通过一个叫react-redux的库和React配合使用。
-// Redux将React组件分为容器型组件和展示型组件，容器型组件一般通过connect函数生成，它订阅了全局状态的变化，通过mapStateToProps函数，可以对全局状态进行过滤，而展示型组件不直接从global state获取数据，起数据来源于父组件。
+* 同步muation commit
+* 异步action dispatch-commit
+
+## 对比Redux
+
+Redux: view => actions => reducer => state变化 => view变化(同步异步一样)
+Vuex: view => commit => mutations => state变化 => view变化(同步操作)
+      view => dispatch => actions => mutations => state变化 => view变化(异步操作)
+
+## React-redux
+
+Redux和Flux类似，只是一种思想或者规范。
+React包含函数式的思想，也是单向数据流，和Redux很搭，所以一般都用Redux来进行状态管理。
+为了简单处理Redux和ReactUI的绑定，一般通过一个叫react-redux的库和React配合使用。
+Redux将React组件分为容器型组件和展示型组件，容器型组件一般通过connect函数生成，它订阅了全局状态的变化，通过mapStateToProps函数，可以对全局状态进行过滤，而展示型组件不直接从global state获取数据，其数据来源于父组件。
+```
 // demo index.js
 import React from 'react';
 import {render} from 'react-dom';
@@ -405,7 +433,7 @@ export default combineReducers({
   VisibilityFilter,
   /// ...
 })
-// containers/VisibleTodoList.js
+// containers/VisibleTodoList.js 容器组件
 import {connect} from 'react-redux';
 import {toggleTodo} from '../actions';
 import TodoList from '../components/TodoList';
@@ -432,21 +460,25 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(TodoList)
-// 简单来说，react-redux就是多了个connect方法连接容器组件和UI组件，这里的连接就是一种映射：mapStateToProps把容器组件的state映射到UI组件的props、mapDispatchToProps把UI组件的事件映射到dispatch方法
+```
 
+简单来说，react-redux就是多了个connect方法连接容器组件和UI组件，这里的连接就是一种映射：mapStateToProps把容器组件的state映射到UI组件的props、mapDispatchToProps把UI组件的事件映射到dispatch方法
 
-Redux-saga
-// saga的意思是一连串的事件。
-// redux-saga没有把异步操作放在action creator中，也没有去处理reducer，而是吧所有的异步操作看成“线程”，可以通过普通的action去触发，当操作完成时也会触发action作为输出。
-// redux-saga把异步获取数据这类操作都叫做副作用（Side Effect），他的目标就是把这些副作用管理好，让他们执行更高效，测试更简单，在处理故障时更容易。
-// Generator函数的很多代码可以被延迟执行，也就是具备了暂停和记忆的功能：约到yield表达式，就暂停执行后面的操作，并将紧跟在yield后面的那个表达式的值，作为返回的对象的value属性值，等着下一次调用next方法时，再继续往下执行。
+## Redux-saga
+
+saga的意思是一连串的事件。
+redux-saga没有把异步操作放在action creator中，也没有去处理reducer，而是把所有的异步操作看成“线程”，可以通过普通的action去触发，当操作完成时也会触发action作为输出。
+redux-saga把异步获取数据这类操作都叫做副作用（Side Effect），他的目标就是把这些副作用管理好，让他们执行更高效，测试更简单，在处理故障时更容易。
+
+Generator函数的很多代码可以被延迟执行，也就是具备了暂停和记忆的功能：约到yield表达式，就暂停执行后面的操作，并将紧跟在yield后面的那个表达式的值，作为返回的对象的value属性值，等着下一次调用next方法时，再继续往下执行。
+```
 function* gen() {
   var url = 'https://api.github.com/users/github';
   var jsonData = yield fetch(url);
   console.log(jsonData);
 }
 var g = gen();
-var result = g.next();    // 这里的result是{value: fetch('https://api.github.com/users/github'), donw: true}
+var result = g.next();    // 这里的result是{value: fetch('https://api.github.com/users/github'), done: true}
 // fetch(url)是一个Promise，所以需要then来执行下一步
 result.value.then(function(data) {
   return data.json();
@@ -454,11 +486,14 @@ result.value.then(function(data) {
   // 获取到json data，然后作为参数调用next，相当于把data传给了jsonData，然后执行console.log(jsonData);
   g.next(data);
 })
-// 再回到redux-saga来，可以把saga想象成开了一个以最快速度不断地调用next方法并尝试获取所有yield表达式值的线程。
+```
+
+再回到redux-saga来，可以把saga想象成开了一个以最快速度不断地调用next方法并尝试获取所有yield表达式值的线程。
+```
 // saga.js
 import {take,put} from 'redux-saga/effects';
 function* mySaga() {
-  // 阻塞：take犯法就是等待USER_INTERACTED_WITH_UI_ACTION这个action执行
+  // 阻塞：take方法就是等待USER_INTERACTED_WITH_UI_ACTION这个action执行
   yield take(USER_INTERACTED_WITH_UI_ACTION);
   // 阻塞：put方法将同步发起一个action
   yield put(SHOW_LOADING_ACTION, {isLoading: true});
@@ -467,9 +502,12 @@ function* mySaga() {
   // 阻塞：将同步发起action（使用刚才返回的Promise.then）
   yield put(SHOW_DATA_ACTION, {data: data});
 }
-// 每一个yield都发起了阻塞，sage会等待执行结果返回，再执行下一指令。也牛市相当于take、put、call、put这几个方法的调用变成了同步的，上面的全部完成反悔了，才会执行下面的，类似于await
-// 使用saga，我们可以很细粒度的控制各个不作用每一部的操作，可以把异步操作和同步发起action一起，随便的排列组合。
-// saga还提供takeEvery、takeLatest之类的辅助函数，来控制是否允许多个异步请求同时执行，尤其是takeLatest，翻遍处理由于网络延迟造成的多次请求数据冲突或混乱的问题。
+```
+
+每一个yield都发起了阻塞，sage会等待执行结果返回，再执行下一指令。也就是相当于take、put、call、put这几个方法的调用变成了同步的，上面的全部完成返回了，才会执行下面的，类似于await。
+使用saga，我们可以很细粒度的控制各个不作用每一部的操作，可以把异步操作和同步发起action一起，随便的排列组合。
+saga还提供takeEvery、takeLatest之类的辅助函数，来控制是否允许多个异步请求同时执行，尤其是takeLatest，方便处理由于网络延迟造成的多次请求数据冲突或混乱的问题。
+```
 function mySaga() {
   if (action.type === 'USER_INTERACTED_WITH_UI_ACTION') {
     store.dispatch({type: 'SHOW_LOADING_ACTION', isLoading: true});
@@ -477,7 +515,10 @@ function mySaga() {
     store.dispatch({type: 'SHOW_DATA_ACTION', data: data});
   }
 }
-// saga还能很方便的并行执行异步任务，或者让两个异步任务竞争:
+```
+
+saga还能很方便的并行执行异步任务，或者让两个异步任务竞争:
+```
 // 并行执行，并等待所有的结果，类似Promise.all的行为
 const [users, repos] = yield [
   call(fetch, '/users'),
@@ -488,13 +529,18 @@ const {posts, timeout} = yield race({
   posts: call(fetchApi, '/posts'),
   timeout: call(delay, 1000)
 })
-// saga的每一步都可以做一些断言（assert）之类的，所以非常方便测试，而且很容易测试到不同的分支。
-// redux-saga文档
-// https://redux-saga-in-chinese.js.org/
+```
 
+saga的每一步都可以做一些断言（assert）之类的，所以非常方便测试，而且很容易测试到不同的分支。
 
-对比Redux-thunk
-// 比较一下redux-thunk和redux-saga的代码
+saga细节参考文档
+<!-- https://redux-saga-in-chinese.js.org/ -->
+
+### 对比Redux-thunk
+
+比较一下redux-thunk和redux-saga的代码
+```
+// redux-thunk
 import * as types from '../constants/ActionTypes';
 export function receiveBooks(data) {
   return {
@@ -515,7 +561,10 @@ export function fetchBooks() {
     );
   };
 }
-// .
+```
+
+```
+// redux-saga
 import {takeLatest} from 'redux-saga';
 import {call, put} from 'redux-saga/effects';
 function* fetchBooks(path) {
@@ -530,18 +579,23 @@ function* fetchSaga() {
   yield* takeLatest("FETCH_BOOKS", fetchBooks);
 }
 export default fetchSaga;
-// 和redux-thunk等其他异步中间件相比来说，redux-saga主要有下面几个特点：
-// 异步数据获取的相关业务逻辑放在了单独的sage.js中，不再是掺杂在action.js或component.js中。
-// dispatch的单数是标准的action，没有魔法。
-// saga代码采用类似同步的方式书写，代码变得更易读。
-// 代码异常/请求失败都可以直接通过try/catch语法直接捕获处理。
-// *很容易测试，如果是thunk的Promise，测试的话就需要不停的mock不同的数据。
-// redux-saga是用一些学习的复杂度，换来了代码的高可维护性，还是很值得在项目中使用的。
+```
 
+和redux-thunk等其他异步中间件相比来说，redux-saga主要有下面几个特点：
 
-Dva
-// 基于redux和redux-saga的数据流方案，内置了react-router和fetch，可以理解为一个轻量级的应用框架。
-// dva做的事情很简单，就是让action、reducer、saga之类的东西可以写到一起，不用分开来写了，比如：
+* 异步数据获取的相关业务逻辑放在了单独的sage.js中，不再是掺杂在action.js或component.js中。
+* dispatch的参数是标准的action。
+* saga代码采用类似同步的方式书写，代码变得更易读。
+* 代码异常/请求失败都可以直接通过try/catch语法直接捕获处理。
+* 很容易测试，如果是thunk的Promise，测试的话就需要不停的mock不同的数据。
+
+redux-saga是用一些学习的复杂度，换来了代码的高可维护性，还是很值得在项目中使用的。
+
+## Dva
+
+官方定义：基于redux和redux-saga的数据流方案，内置了react-router和fetch，可以理解为一个轻量级的应用框架。
+dva做的事情很简单，就是让action、reducer、saga之类的东西可以写到一起，不用分开来写了，比如：
+```
 app.model({
   // namespace - 对应reducer和combine到rootReducer时的key值
   namespace: "products",
@@ -576,7 +630,12 @@ app.model({
     },
   },
 });
-// dva最主要就是把store及saga统一为一个model的概念（有点类似Vuex的Module），写在了一个js文件里。增加了一个Subscriptions，用于收集其他来源的action，比如快捷键操作。
+```
+
+saga拦截add这个action，发起http请求，如果请求成功，则继续向reducer发一个addTodoSuccess的action，提示创建成功，反之则发送addTodoFail的action即可。
+
+dva最主要就是把store及saga统一为一个model的概念（有点类似Vuex的Module），写在了一个js文件里。增加了一个Subscriptions，用于收集其他来源的action，比如快捷键操作。
+```
 app.model({
   namespace: 'count',
   state: {
@@ -608,28 +667,34 @@ app.model({
     },
   },
 });
+```
 
+## MobX
 
-MobX
-// 前面的都还是Flux体系的，都是单向数据流方案，接下来要说的MobX，就和他们不太一样了。
-// 问题：解决应用状态管理的问题。目标：统一维护公共的应用状态，以统一并且可控的方式更新状态，状态更新后，View跟着更新。
-// MobX背后的哲学很简单：任何源自应用状态的东西都应该自动地获得。状态只要一变，其他用到状态的地方就跟着自动变。
-// Flux或者Redux的思想主要就是函数式编程（FP）的思想，MobX更接近于面向对象编程，它把state包装秤可观察的对象，这个对象会驱动各种改变。
-// state只要以改变，所有用到它的地方就都跟着改变了。这样整个View可以被state来驱动。
+前面的都还是Flux体系的，都是单向数据流方案，接下来要说的MobX，就和他们不太一样了。
+问题：解决应用状态管理的问题。目标：统一维护公共的应用状态，以统一并且可控的方式更新状态，状态更新后，View跟着更新。
+MobX背后的哲学很简单：任何源自应用状态的东西都应该自动地获得。状态只要一变，其他用到状态的地方就跟着自动变。
+Flux或者Redux的思想主要就是函数式编程（FP）的思想，MobX更接近于面向对象编程，它把state包装成可观察的对象，这个对象会驱动各种改变。
+state只要改变，所有用到它的地方就都跟着改变了。这样整个View可以被state来驱动。
+```
 const obj = observable({a: 1, b: 2})
 autoRun(() => {
   console.log(obj.a)
 })
 obj.b = 3;  // nothing happen
 obj.a = 2;  // observe函数的回调触发了，控制台输出：2
-// MobX允许有多个store，而且这些store里的state可以直接修改，不用像Redux那样每次返回个新的。这个有点像Vuex，自由度更高，写的代码更少。不过它也会让代码不好维护。
-// MobX和Flux、Redux一样，都是和具体的前端框架无关的，也就是说可以用于React（mobx-react）或者Vue（mobx-vue）。一般来说，用到React比较常见，很少用于Vue，因为Vuex本身就类似MobX，很灵活。如果我们把MobX用于React或者Vue，可以看到很多setState()和this.state.xxx=这样的处理都可以省略了。
-// MobX文档
-// https://cn.mobx.js.org/
+```
 
+MobX允许有多个store，而且这些store里的state可以直接修改，不用像Redux那样每次返回个新的。这个有点像Vuex，自由度更高，写的代码更少。不过它也会让代码不好维护。
+MobX和Flux、Redux一样，都是和具体的前端框架无关的，也就是说可以用于React（mobx-react）或者Vue（mobx-vue）。一般来说，用到React比较常见，很少用于Vue，因为Vuex本身就类似MobX，很灵活。如果我们把MobX用于React或者Vue，可以看到很多setState()和this.state.xxx=这样的处理都可以省略了。
 
-对比Redux
-// 以计数器代码为例
+MobX文档
+<!-- https://cn.mobx.js.org/ -->
+
+## MobX对比Redux
+
+以计数器代码为例
+```
 // Redux代码
 import React, {Component} from 'react';
 import {
@@ -691,6 +756,9 @@ export default class App extends Component {
     )
   }
 }
+```
+
+```
 // MobX代码
 import React, {Component} from 'react';
 import {observable, action} from 'mobx';
@@ -748,13 +816,9 @@ class App extends Component {
   }
 }
 export default App;
-// 以下对比
-// Redux数据流流动很自然，可以充分利用时间回溯的特性，增强业务的可预测性；MobX没有那么自然的数据流动，也没有时间回溯的能力，但是View更新很准确，粒度控制很细。
-// Redux通过引入一些中间件来处理副作用；MobX没有中间件，副作用的处理比较自由，比如依靠autorunAsync之类的方法。
-// Redux的样板代码更多，做一大堆准备工作，然后才开始炒菜；MobX基本没有多余代码，直接硬来。
-// Redux比Mobx更多的样板代码，是因为特定的设计约束。如果项目比较小的话，使用MobX会比较灵活，但是大型项目，像MobX这样没有约束，没有最佳实践的方式，会造成代码很难维护，各有利弊。一般来说，小项目建议MobX就够了，大项目还是用Redux比较合适。
+```
 
-
-
-
-
+* Redux数据流流动很自然，可以充分利用时间回溯的特性，增强业务的可预测性；MobX没有那么自然的数据流动，也没有时间回溯的能力，但是View更新很准确，粒度控制很细。
+* Redux通过引入一些中间件来处理副作用；MobX没有中间件，副作用的处理比较自由，比如依靠autorunAsync之类的方法。
+* Redux的样板代码更多，做一大堆准备工作，然后才开始炒菜；MobX基本没有多余代码，直接硬来。
+* Redux比Mobx更多的样板代码，是因为特定的设计约束。如果项目比较小的话，使用MobX会比较灵活，但是大型项目，像MobX这样没有约束，没有最佳实践的方式，会造成代码很难维护，各有利弊。一般来说，小项目建议MobX就够了，大项目还是用Redux比较合适。
