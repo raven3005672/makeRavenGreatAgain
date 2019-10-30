@@ -26,3 +26,4 @@ var parent = new Parent('father');
 parent.sayName();       // parent name: father
 
 var child = new Child('son', 'father')
+child.sayName();
