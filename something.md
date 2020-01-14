@@ -3,3 +3,10 @@
 发展技术实力是有局限的，之后更多比拼软实力。
 
 没有财务能力不要创业。
+
+
+对于大部分图片：
+<img async decoding="async" loading="lazy" importance="low" />
+
+可以优化 FMP。
+
