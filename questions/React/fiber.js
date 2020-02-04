@@ -2,9 +2,11 @@
 
 // 原有的组件生命周期
 // 挂载阶段
-constructor => componentWillMount => render => componentDidMount
+constructor => getDerivedStateFromProps => render => componentDidMount
 // 更新阶段
-componentWillReceiveProps => shouldComponentUpdate => componentWillUpdate => render => componentDidUpdate
+getDerivedStateFromProps => shouldComponentUpdate => render => getSnapshotBeforeUpdate => componentDidUpdate
+// 卸载
+componentWillUnmount
 
 // 如果是一个很大，层级很深的组件，react渲染它需要很久，在这期间，react会一直占用浏览器主线程，任何其他的操作(包括用户的点击，鼠标移动等操作)都无法执行。
 
