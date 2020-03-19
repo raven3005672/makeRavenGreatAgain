@@ -43,7 +43,7 @@ console.log('script end');
 // 4、当前宏任务执行完毕，开始检查渲染，然后GUI线程接管渲染
 // 5、渲染完毕后，js线程继续接管，开始下一个宏任务
 
-// Promise和aysnc立即执行，then和await做异步处理
+// Promise和async立即执行，then和await做异步处理
 // await是一个让出线程的标志。await后面的表达式会执行一遍，将await后面的代码加入到microtask中，然后就会跳出整个async函数来执行后面的代码。
 // async await本身是语法糖，await后面的代码就是microtask
 async function async1() {
