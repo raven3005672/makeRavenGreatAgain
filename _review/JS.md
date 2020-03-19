@@ -335,6 +335,30 @@ a.join = a.shift;
 
 一共有6种方式：原型链继承、借用构造函数、组合继承（原型链+借用构造函数）、原型式继承、寄生式继承、寄生组合式继承
 
+极简
+
+```js
+function Father() {}
+function Child() {}
+// 1。原型
+Child.prototype = new Father()
+// 2.构造
+function Child(name) {
+    Father.call(this, name)
+}
+// 3.组合
+function Child(name) {
+    Father.call(this, name)
+}
+Child.prototype = new Father()
+// 4.寄生
+function cloneObj(o) {
+    var clone = Object.create(o);
+    clone.sayName = '...'
+    return clone;
+}
+```
+
 ### 原型链继承
 
 原型链继承的基本思想是利用原型让一个引用类型继承另一个引用类型的属性和方法。
@@ -988,4 +1012,175 @@ var b = a;
 a = a.x = { x: 1 };
 console.log(a, b);
 // a: {x: 1}, b: {x: {x: 1}}
+```
+
+## generator
+
+Generator函数是一个状态机
+
+```js
+function* helloWorldGenerator() {
+    yield 'hello';
+    yield 'world';
+    return 'ending';
+}
+var hw = helloWorldGenerator();
+hw.next()
+// { value: 'hello', done: false }
+hw.next()
+// { value: 'world', done: false }
+hw.next()
+// { value: 'ending', done: true }
+hw.next()
+// { value: undefined, done: true }
+```
+
+## 手写promise实现
+
+```js
+var myPormise = new Promise((resolve, reject) => {
+    if (/* true */) {
+        resolve(value)
+    } else if (/* false */) {
+        reject(error)
+    }
+})
+myPromise.then((value) => {
+    // 成功后回调，value
+}, (error) => {
+    // 失败后调用，error
+}).catch();
+```
+
+优点：决绝回调地狱，对异步任务写法更加标准化和简洁化
+缺点：首先，无法取消Promise，一旦新建它就会立即执行，无法中途取消；其次，如果不设置回调函数，Promise内部抛出的错误，不会反映到外部；第三，当处于pending状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）
+
+```js
+function promise() {
+    this.msa = '';
+    this.status = 'pending';
+    var that = this;
+    var process = arguments[0];
+
+    process(function() {
+        that.status = 'fulfilled';
+        that.msg = arguments[0]
+    }, function() {
+        thath.status = 'rejected';
+        thah.msg = arguments[0]
+    })
+    return this
+}
+promise.prototype.then = function() {
+    if (this.status === 'fulfilled') {
+        arguments[0](this.msg);
+    } else if (this.status === 'rejected' && arguments[1]) {
+        arguments[1](this.msg);
+    }
+}
+```
+
+## 观察者模式 & 发布订阅模式
+
+## 手写bind
+
+```js
+Function.prototype._bind = function() {
+    let self = this;
+    let context = Array.prototype.shift.call(arguments)
+    let args = Array.prototype.slice.call(arguments)
+    return function() {
+        self.apply(context, Array.prototype.concat.call(args, Array.prototype.slice.call(arguments)))
+    }
+}
+```
+
+## async-await
+
+* Generator函数的语法糖，将*改成async，yield改成await
+* 是对Generator函数的改进，返回promise
+* 异步写法同步化，遇到await先返回，执行完异步再执行接下来的
+* 内置执行器，无需next()
+
+## 手动实现map
+
+```js
+// for循环实现
+Array.prototype._map = function() {
+    var arr = this;
+    var [fn, thisValue] = Array.prototype.slice.call(arguments);
+    var result = [];
+    for (var i = 0; i < arr.length; i++) {
+        result.push(fn.call(thisValue, arr[i], i, arr))
+    }
+    return result;
+}
+// forEach实现
+Array.prototype._map = function(fn, thisValue) {
+    var arr = this;
+    this.forEach((v, i, arr) => {
+        result.push(fn.call(thisValue, v, i, arr))
+    });
+    return result;
+}
+```
+
+## 对原型链的理解
+
+* 在js里，继承机制是原型继承。继承的起点是对象的原型
+* 一切皆为对象，只要是对象，就会有proto属性，该属性存储了指向其构造函数的指针
+* Object.prototype也是对象，其proto指向null
+* 对象分两种：函数对象和普通对象，只有函数对象拥有原型对象
+* prototype的本质是普通对象
+* Function.prototype比较特殊，是没有prototype的函数对象
+* new操作得到的对象是普通对象
+* 当调用一个对象的属性时，会先在本身查找，若无，就根据proto找到构造原型，若无，则继续往上找。最后会打到顶层Object.prototype，他的proto指向null，均无结果则返回undefined，结束。
+* 有proto串起的路径就是原型链
+* 通过prototype可以给所有子类共享属性
+
+## sleep函数
+
+```js
+function sleep(delay) {
+    var start = Date.now();
+    while (Date.now() - start < delay) {
+        continue;
+    }
+}
+```
+
+## js实现instanceof
+
+检测L的原型链（__proto__）上食肉有R.prototype，若有返回true，否则返回false
+
+```js
+function myInstanceof(L, R) {
+    var _R = R.prototype;
+    var L = L.__proto__;
+    while (L) {
+        if (L === null) return false;
+        if (L === _R) return true;
+        L = L.__proto__;
+    }
+    return false
+}
+```
+
+## forIn和forOf的区别
+
+* forin遍历数组会遍历到数组原型上的属性和方法，更适合遍历对象
+* forEach不支持break，continue，return等
+* forof可以成功遍历数组的值，而不是索引，不会遍历原型
+* forin可以遍历到obj的原型方法，如果不想遍历原型方法和属性的话，可以在循环内部判断一下，hasOwnProperty方法可以判断某属性是否是该对象的实例属性
+
+## promise.finally实现
+
+```js
+Promise.prototype.finally = function (callback) {
+    let P = this.constructor;
+    return this.then(
+        value => P.resolve(callback()).then(() => value),
+        err => P.resolve(callback()).then(() => { throw err })
+    )
+}
 ```
