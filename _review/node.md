@@ -77,5 +77,31 @@ cluster.on('exit', function (worker, code, signal) {
 
 监听子进程的message消息
 
+## express和koa的区别
 
+一个团队开发的，express主要使用es5语法，处理异步用的是回调函数。
+koa采用es6中的generator+yeild+promise处理异步
+koa2采用es7中的async/await+promise处理异步
+
+## koa解决跨域
+
+cors设置跨域头，通过中间件方式调用
+
+```js
+const httpCors = async (ctx, next) => {
+    ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
+    ctx.set('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    if (ctx.method == 'OPTIONS') {
+        ctx.body = 200;
+    } else {
+        await next();
+    }
+};
+app.use(httpCors)
+```
+
+## npm是什么
+
+node package manager
 
