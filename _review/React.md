@@ -444,7 +444,29 @@ function A () {
 }
 ```
 
+react-loadable
+
+```js
+import Loadable from 'react-loadable';
+import Loading from '../xxxx';
+const LoadableComponent = Loadable({
+    loader: () => import('./xxxxxxx'),
+    loading: Loading
+})
+export default class App extends React.Component {
+    render() {
+        return <LoadableComponent/>
+    }
+}
+```
+
 loadable支持SSR、代码分割。
+
+import()方法动态加载，不能传变量，只能使用字符串和字符串模板。
+
+* 利用import返回一个Promise对象的性质，进行loading异步操作。
+* React.createElement() API
+* Promise对象原理
 
 ## history的API
 

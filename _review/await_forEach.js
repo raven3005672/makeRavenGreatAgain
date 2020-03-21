@@ -16,7 +16,7 @@ async function test() {
         console.log(res)
     }
     // 一起输出149
-    // arr.forEach(async x => {
+    // arr.forEach(x => {
     //     const res = await a(x);
     //     console.log(res);
     // })

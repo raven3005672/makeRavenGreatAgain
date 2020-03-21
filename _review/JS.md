@@ -11,8 +11,6 @@
 ```js
 function _new(Fn) {
     let target = {};
-    // let [constructor, ...args] = [...arguments];
-    // target.__proto__ = constructor.prototype;
     target.__proto__ = Fn.prototype;
     target.__proto__.constructor = Fn;
     let args = Array.prototype.slice.call(arguments, 1);
@@ -375,7 +373,7 @@ function SuperType() {
 SuperType.prototype.getName = function() {
     return this.name;
 }
-function SubtType() {
+function SubType() {
     this.age = 22;
 }
 SubType.prototype = new SuperType();
@@ -552,7 +550,6 @@ function SuberType(name, age) {
     SuperType.call(this, name)
     this.age = age
 }
-SuberType.prototype = new SuperType();
 inheritPrototype(SuberType, SuperType);
 ```
 
@@ -626,21 +623,6 @@ function debounce(fn) {
         }, 500);
     }
 }
-
-function debounce(fn, wait, immediate) {
-    let timer;
-    return function() {
-        if (immediate) {
-            fn.apply(this, arguments);
-        }
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-            fn.apply(this, arguments);
-        }, wait);
-    }
-}
 ```
 
 ```js
@@ -698,21 +680,9 @@ function throttle(fn) {
         if (!canRun) return;
         canRun = false;
         setTimeout(() => {
-            fn.apply(this.arguments);
+            fn.apply(this, arguments);
             canRun = true;
         }, 500);
-    }
-}
-
-function throttle(fn, wait) {
-    let prev = new Date();
-    return function() {
-        const args = Array.prototype.slice.call(arguments);
-        const now = new Date();
-        if (now - prev > wait) {
-            fn.apply(this, arguments);
-            prev = new Date();
-        }
     }
 }
 ```
@@ -828,7 +798,7 @@ Promise.all = function(promises) {
         } else {
             let result = [];
             let index = 0;
-            for (let i = 0; i < promises.lengthl i++) {
+            for (let i = 0; i < promises.length; i++) {
                 // 考虑到i可能是thenable对象也可能是普通值
                 Promise.resolve(promises[i]).then(data => {
                     result[i] = data;
@@ -843,6 +813,39 @@ Promise.all = function(promises) {
             }
         }
     });
+}
+```
+
+## promise.race实现
+
+```js
+Promise.race = function(promises) {
+    return new Promise((resolve, reject) => {
+        if (promises.length === 0) {
+            return;
+        } else {
+            for (let i = 0; i < promises.length; i++) {
+                Promise.resolve(promises[i]).then(data => {
+                    resolve(data);
+                    return;
+                }, err => {
+                    reject(err);
+                    return;
+                })
+            }
+        }
+    })
+}
+```
+
+## promise.finally实现
+
+```js
+Promise.prototype.finally = function (callback) {
+    return this.then(
+        value => Promise.resolve(callback()).then(() => value),
+        err => Promise.resolve(callback()).then(() => { throw err })
+    )
 }
 ```
 
@@ -1082,6 +1085,63 @@ promise.prototype.then = function() {
 
 ## 观察者模式 & 发布订阅模式
 
+观察者模式：观察者知道Subject，Subject对观察者进行记录。一般是同步的。
+
+```js
+// 观察者模式
+class Subject() {
+    constructor() {
+        this.Observers = [];
+    }
+    add(observer) {
+        this.Observers.push(observer)
+    }
+    remove(observer) {
+        this.Observers = this.Observers.filter(item => item === observer)
+    }
+    notify() {
+        this.Oberservers.forEach(item => {
+            item.update();
+        })
+    }
+}
+class Observer {
+    constructor(name) {
+        this.name = name;
+    }
+    update() {
+        console.log(this.name)
+    }
+}
+```
+
+发布订阅模式：发布者和订阅者付不知道对方存在，只通过消息代理进行通信。一般是异步的【消息队列】
+
+```js
+// 最好参考eventEmitter
+let pubSub = {
+    subs: {},
+    subscribe(key, fn) {
+        if (!this.subs[key]) {
+            this.subs[key] = [];
+        }
+        this.subs[key].push(fn);
+    },
+    publish(key, ...arg) {
+        let fns = this.subs[key];
+        if (!fns || fns.length <= 0) {
+            return;
+        }
+        for (let i = 0; i < fns.length; i++) {
+            fns[i](...arg)
+        }
+    },
+    unsubscribe(key) {
+        delete this.subs[key]
+    }
+}
+```
+
 ## 手写bind
 
 ```js
@@ -1151,7 +1211,7 @@ function sleep(delay) {
 
 ## js实现instanceof
 
-检测L的原型链（__proto__）上食肉有R.prototype，若有返回true，否则返回false
+检测L的原型链（__proto__）上是否有R.prototype，若有返回true，否则返回false
 
 ```js
 function myInstanceof(L, R) {
@@ -1172,15 +1232,3 @@ function myInstanceof(L, R) {
 * forEach不支持break，continue，return等
 * forof可以成功遍历数组的值，而不是索引，不会遍历原型
 * forin可以遍历到obj的原型方法，如果不想遍历原型方法和属性的话，可以在循环内部判断一下，hasOwnProperty方法可以判断某属性是否是该对象的实例属性
-
-## promise.finally实现
-
-```js
-Promise.prototype.finally = function (callback) {
-    let P = this.constructor;
-    return this.then(
-        value => P.resolve(callback()).then(() => value),
-        err => P.resolve(callback()).then(() => { throw err })
-    )
-}
-```
