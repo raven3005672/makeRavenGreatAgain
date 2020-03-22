@@ -1097,7 +1097,7 @@ class Subject() {
         this.Observers.push(observer)
     }
     remove(observer) {
-        this.Observers = this.Observers.filter(item => item === observer)
+        this.Observers = this.Observers.filter(item => item !== observer)
     }
     notify() {
         this.Oberservers.forEach(item => {
