@@ -61,7 +61,7 @@ myfn(Foo);
 
 ## keyof关键词有什么用
 
-## 下面代码中，foo的类型如何声明
+## 下面代码中，foo的类型如何声明？
 
 ```js
 function fn(value: number): string {

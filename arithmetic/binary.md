@@ -37,7 +37,7 @@ var preorderTraversal = function(root) {
             }
             if(node.right != null){
                 pushRoot(node.right);
-            } 
+            }
         }
     }
     pushRoot(root);

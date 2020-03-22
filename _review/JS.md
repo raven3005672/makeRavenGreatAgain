@@ -1142,6 +1142,34 @@ let pubSub = {
 }
 ```
 
+eventEmitter
+
+```js
+class EventEmitter {
+    constructor() {
+        // this._eventpool = {};
+    }
+    on(event, callback) {
+        if (!this._eventpool) this._eventpool = {}
+        this._eventpool[event] ? this._eventpool[event].push(callback) : this._eventpool[event] = [callback];
+    }
+    emit(event, ...args) {
+        this._eventpool[event] && this._eventpool[event].forEach(cb => cb(...args))
+    }
+    off(event) {
+        if (this._eventpool[event]) {
+            delete this._eventpool[event]
+        }
+    }
+    once(event, callback) {
+        this.on(event, (...args) => {
+            callback(...args);
+            this.off(event)
+        })
+    }
+}
+```
+
 ## 手写bind
 
 ```js
@@ -1178,6 +1206,7 @@ Array.prototype._map = function() {
 // forEach实现
 Array.prototype._map = function(fn, thisValue) {
     var arr = this;
+    var result = [];
     this.forEach((v, i, arr) => {
         result.push(fn.call(thisValue, v, i, arr))
     });
@@ -1232,3 +1261,26 @@ function myInstanceof(L, R) {
 * forEach不支持break，continue，return等
 * forof可以成功遍历数组的值，而不是索引，不会遍历原型
 * forin可以遍历到obj的原型方法，如果不想遍历原型方法和属性的话，可以在循环内部判断一下，hasOwnProperty方法可以判断某属性是否是该对象的实例属性
+
+## 变量提升
+
+```js
+var tmp = 1;
+function f() {
+    console.log(tmp);
+    if (false) {
+        var tmp = 2;
+    }
+}
+f();        // undefined
+
+// 函数声明——全部提升
+console.log(foo);       // function() {}
+var foo = 'xxx';
+function foo() {}
+
+// 函数表达式——只有变量提升
+console.log(foo);       // undefined
+var foo = 'xxx';
+var foo = function() {}
+```

@@ -27,7 +27,7 @@
 // 手写promise
 // 手写debounce
 // 封装fetch支持abort
-// setTimout和requestAnimationFrame差异
+// setTimeout和requestAnimationFrame差异
 // 页面优化
 // script标签 defer async prefetch
 
