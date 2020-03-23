@@ -1284,3 +1284,13 @@ console.log(foo);       // undefined
 var foo = 'xxx';
 var foo = function() {}
 ```
+
+## requestAnimationFrame
+
+请求动画帧。
+
+由系统决定回调函数的执行时机。60hz的刷新频率，每次刷新的间隔会执行一次回调函数，不会引起丢帧，不会卡顿。
+
+CPU节能：使用setTimeout实现的动画，当页面被隐藏或最小化时，setTimeout仍然在后台执行动画任务，浪费CPU资源。requestAnimationFrame在页面未激活状态下，屏幕刷新任务也会被系统暂停，页面被激活时，动画从上次停留的地方继续执行，有效节省CPU开销。
+
+函数节流：在高频率事件中，为了防止在一个刷新间隔内发生多次函数执行，使用requestAnimationFrame可保证每个刷新间隔内，函数只被执行一次，保证流畅性，更好的节省函数执行的开销。
