@@ -542,6 +542,22 @@ function inheritPrototype(subType, superType) {
     prototype.constructor = subType;
     subType.prototype = prototype;
 }
+function A() {
+    this.a = 1,
+    this.arr = [1,2,3]
+}
+A.prototype.print() {
+    console.log('a: ', this.a)
+}
+function B(xx) {
+    A.call(this);
+    this.xx = xx;
+}
+let b = new B('abc');
+inheritPrototype(B, A);
+
+
+
 function SuperType(name) [
     this.name = name;
     this.colors = [1,2,3]
@@ -1000,12 +1016,12 @@ iter.next();      // {value:3, done:false}
 
 ## 性能优化
 
-babel-loader用include或exclude避免不必要的转译，不转译node_modules中的js文件
-缓存当前转译的js文件没设置loader: 'bebel-loader?cacheDirectory=true'
-文件采用按需加载等等
-数据压缩，request headers中加上accept-encoding: gzip
-图片优化，采用svg图片或者字体图标
-浏览器缓存机制，强缓存与协商缓存
+* babel-loader用include或exclude避免不必要的转译，不转译node_modules中的js文件
+* 缓存当前转译的js文件没设置loader: 'bebel-loader?cacheDirectory=true'
+* 文件采用按需加载等等
+* 数据压缩，request headers中加上accept-encoding: gzip
+* 图片优化，采用svg图片或者字体图标
+* 浏览器缓存机制，强缓存与协商缓存
 
 ## 输出
 
@@ -1246,12 +1262,12 @@ function sleep(delay) {
 function myInstanceof(L, R) {
     var _R = R.prototype;
     var L = L.__proto__;
-    while (L) {
+    while (true) {
         if (L === null) return false;
         if (L === _R) return true;
         L = L.__proto__;
     }
-    return false
+    // return false
 }
 ```
 
@@ -1294,3 +1310,15 @@ var foo = function() {}
 CPU节能：使用setTimeout实现的动画，当页面被隐藏或最小化时，setTimeout仍然在后台执行动画任务，浪费CPU资源。requestAnimationFrame在页面未激活状态下，屏幕刷新任务也会被系统暂停，页面被激活时，动画从上次停留的地方继续执行，有效节省CPU开销。
 
 函数节流：在高频率事件中，为了防止在一个刷新间隔内发生多次函数执行，使用requestAnimationFrame可保证每个刷新间隔内，函数只被执行一次，保证流畅性，更好的节省函数执行的开销。
+
+## requestIdleCallback()
+
+在浏览器的空闲时段内调用的函数排队。这使开发者能够在主事件循环上执行后台和低优先级工作，而不会影响延迟关键事件，如动画和输入响应。
+
+## 任务队列
+
+正常 => 读取所有微任务 => 读取一个宏任务 => 读取所有微任务 => 读取一个宏任务
+
+
+
+
