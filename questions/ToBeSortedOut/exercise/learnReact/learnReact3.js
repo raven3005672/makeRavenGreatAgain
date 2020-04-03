@@ -63,7 +63,7 @@ var ReactDefaultBatchingStrategy = {
 // React内部采用了状态机的概念，组件处于不同的状态时，所执行的逻辑并不相同。以组件更新流程为例，React以事务+状态的形式对组件进行更新。
 
 // 2.transaction事务
-{/* <pre>
+/* <pre>
  *                       wrappers (injected at creation time)
  *                                      +        +
  *                                      |        |
@@ -86,7 +86,7 @@ var ReactDefaultBatchingStrategy = {
  *                    | +---+ +---+   +---------+   +---+ +---+ |
  *                    |  initialize                    close    |
  *                    +-----------------------------------------+
- * </pre> */}
+ * </pre> */
 // 每一个方法会被wrapper所包裹，必须用perform调用，在被包裹方法前后分别执行initialize和close
 
 // 简单举例wrapper包裹的函数执行
@@ -251,7 +251,7 @@ performUpdateIfNecessary = function(transaction) {
         this._updateBatchNumber = null;
     }
 }
-// 合并state后React会将this._pendingStateQueue设置为null，这样dirtyComponent进入下一次批量处理时，已经耿兴国的组件不会进入重复的流程，保证组件只做一次更新操作
+// 合并state后React会将this._pendingStateQueue设置为null，这样dirtyComponent进入下一次批量处理时，已经更新过的组件不会进入重复的流程，保证组件只做一次更新操作
 // 所以不能再componentWillUpdate中调用setState的原因，就是setState会令_pendingStateQueue为true，导致再次执行updateComponent，而后会再次调用componentWillUpdate，最终循环调用componentWillUpdate导致浏览器的崩溃
 // (3)关于React依赖注入
 // 对于更新队列的标志batchingStrategy，我们直接转向对ReactDefaultBatchingStrategy进行分析，这是因为React内部存在大量的依赖注入。
