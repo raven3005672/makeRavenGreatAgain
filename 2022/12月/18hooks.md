@@ -1,0 +1,4 @@
+1. 不想引起useEffect重新执行的变量，就可以用useRef做一层代理
+2. 使用useCallback的时候，对应的子组件一定要使用React.memo包裹，否则使用useCallback就没有任何的意义
+3. 不能在函数式组件上使用ref属性，因为函数式组件没有实例。useRef,forwardRef,useImperativeHandle组合使用
+
