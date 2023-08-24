@@ -380,7 +380,7 @@ Switch中只有一个Route会被渲染，Redirect用来兜底
 
 保证内部一致性（等待父组件渲染后）、性能优化、支持state幕后渲染
 
-## PureComponet
+## PureComponent
 
 避免父组件的state或者props更新引起的子组件render
 
@@ -475,6 +475,6 @@ replaceState(data, title, targetUrl)    // 会直接替换当前url，但是不�
 二者都不触发popstate事件
 
 popstate事件
-点击回退、前进、调用back、foward、go方法触发
+点击回退、前进、调用back、forward、go方法触发
 
 

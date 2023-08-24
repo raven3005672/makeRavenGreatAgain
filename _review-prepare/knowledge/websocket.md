@@ -58,6 +58,10 @@ Sec-WebSocket-Accept: aAO8QyaRJEYUX2yG+pTEwRQK04w=
 SSE 全称：Server-Sent Events
 SSE 使用 HTTP协议，而 HTTP 协议无法由服务器主动推送消息，但有一种变通方式，即服务端向客户端声明，接下来发送的为流信息。其为一个连续发送的数据流，而不是一个一次性的数据包，故客户端不会关闭连接，而是一直等服务器发送新的数据流。SSE 就是通过这种机制，使用流信息向浏览器推送消息。
 
+CHATGPT使用了这种
+
+fetchEventSource现成的库
+
 ## 什么场景选用SSE
 
 只需要服务器给客户端发送消息的场景时，SSE可胜任。

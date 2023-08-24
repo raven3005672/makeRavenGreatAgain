@@ -806,7 +806,7 @@ let p = Promise.all([p1,p2,p3])
 * 在任何情况下，Promise.all返回的promise的完成状态的结果都是一个数组
 
 ```js
-Promise.all = function(promises) {
+Promise.prototype.all = function(promises) {
     // promises是可迭代对象，省略参数合法性校验
     return new Promise((resolve, reject) => {
         if (promises.length === 0) {
@@ -1085,8 +1085,8 @@ function promise() {
         that.status = 'fulfilled';
         that.msg = arguments[0]
     }, function() {
-        thath.status = 'rejected';
-        thah.msg = arguments[0]
+        that.status = 'rejected';
+        that.msg = arguments[0]
     })
     return this
 }
@@ -1116,7 +1116,7 @@ class Subject() {
         this.Observers = this.Observers.filter(item => item !== observer)
     }
     notify() {
-        this.Oberservers.forEach(item => {
+        this.Observers.forEach(item => {
             item.update();
         })
     }
@@ -1163,7 +1163,7 @@ eventEmitter
 ```js
 class EventEmitter {
     constructor() {
-        // this._eventpool = {};
+        this._eventpool = {};
     }
     on(event, callback) {
         if (!this._eventpool) this._eventpool = {}
